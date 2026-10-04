@@ -1,30 +1,8 @@
-import { webhookCallback } from 'grammy'
-import { getBot } from '../server/bot/bot.js'
-
-let webhookHandler: ((req: Request) => Promise<Response>) | null = null
-
-/**
- * Mereset instance webhookHandler (berguna untuk keperluan testing).
- */
-export function resetBotWebhookHandler(): void {
-  webhookHandler = null
-}
-
-function getWebhookHandler(secretToken?: string): (req: Request) => Promise<Response> {
-  if (!webhookHandler) {
-    const bot = getBot()
-    webhookHandler = webhookCallback(bot, 'std/http', {
-      onTimeout: 'return',
-      timeoutMilliseconds: 10_000,
-      secretToken,
-    })
-  }
-  return webhookHandler
-}
+import { getWebhookHandler } from '../server/bot/webhook.js'
 
 /**
  * Handler HTTP POST untuk webhook update Telegram.
- * Menggunakan Web Standard Request & Response yang cocok untuk Vercel Serverless Function.
+ * Menggunakan Web Standard Request & Response untuk Vercel Serverless Functions.
  */
 export async function POST(req: Request): Promise<Response> {
   // Hanya metode POST yang diizinkan untuk update Telegram
@@ -70,17 +48,4 @@ export async function GET(): Promise<Response> {
     status: 405,
     headers: { 'Content-Type': 'application/json' },
   })
-}
-
-/**
- * Default export handler untuk kompatibilitas Vercel Serverless Function.
- */
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
-  return POST(req)
 }

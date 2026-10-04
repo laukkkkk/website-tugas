@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Bot } from 'grammy'
 import { createOwnerFilter } from '../../server/bot/owner.js'
+import { resetBotWebhookHandler } from '../../server/bot/webhook.js'
 
 // Mock getBot dari server/bot/bot.js
 const mockNextHandler = vi.fn().mockResolvedValue(undefined)
@@ -13,7 +14,7 @@ vi.mock('../../server/bot/bot.js', () => {
   }
 })
 
-import { POST, GET, default as defaultHandler, resetBotWebhookHandler } from '../../api/bot.js'
+import { POST, GET } from '../../api/bot.js'
 
 describe('Telegram Bot Webhook Endpoint (api/bot.ts)', () => {
   const SECRET_TOKEN = 'super-secret-telegram-webhook-token-12345'
@@ -52,11 +53,11 @@ describe('Telegram Bot Webhook Endpoint (api/bot.ts)', () => {
     const getBody = await getRes.json()
     expect(getBody).toEqual({ error: 'Method Not Allowed' })
 
-    // 2. Menguji defaultHandler dengan method GET
+    // 2. Menguji handler POST jika menerima request dengan method selain POST
     const req = new Request('http://localhost/api/bot', {
       method: 'GET',
     })
-    const res = await defaultHandler(req)
+    const res = await POST(req)
     expect(res.status).toBe(405)
     const body = await res.json()
     expect(body).toEqual({ error: 'Method Not Allowed' })
