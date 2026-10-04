@@ -34,8 +34,8 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
     <div
       className={`group flex items-center justify-between gap-3 p-3.5 rounded-xl border transition-all ${
         todo.selesai
-          ? 'bg-slate-50/50 dark:bg-slate-900/30 border-slate-200/50 dark:border-slate-800/50 opacity-75'
-          : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-cyan-300 dark:hover:border-cyan-800 shadow-2xs'
+          ? 'bg-[var(--bg-page)]/80 border-[var(--border-main)]/60 opacity-75'
+          : 'bg-[var(--bg-card)] border-[var(--border-main)] hover:border-cyan-500/50 shadow-2xs'
       }`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -52,7 +52,7 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
               todo.selesai
                 ? 'bg-cyan-600 border-cyan-600 text-white'
-                : 'border-slate-300 dark:border-slate-600 hover:border-cyan-500 bg-white dark:bg-slate-800'
+                : 'border-[var(--border-main)] hover:border-cyan-500 bg-[var(--bg-input)]'
             } ${isToggling ? 'opacity-50 animate-pulse' : ''}`}
           >
             {todo.selesai && (
@@ -66,8 +66,8 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
         <span
           className={`text-sm break-words flex-1 transition-all ${
             todo.selesai
-              ? 'line-through text-slate-400 dark:text-slate-500'
-              : 'text-slate-900 dark:text-slate-100 font-medium'
+              ? 'line-through text-[var(--text-muted)]'
+              : 'text-[var(--text-main)] font-medium'
           }`}
         >
           {todo.teks}
@@ -79,7 +79,7 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
         onClick={handleDeleteClick}
         disabled={isDeleting}
         title="Hapus to-do"
-        className="shrink-0 p-1.5 rounded-lg text-slate-300 dark:text-slate-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors opacity-80 group-hover:opacity-100 cursor-pointer disabled:opacity-40"
+        className="shrink-0 p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-80 group-hover:opacity-100 cursor-pointer disabled:opacity-40"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path

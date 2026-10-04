@@ -159,10 +159,10 @@ export function Kerjaan() {
       {/* Header Halaman & Tombol Tambah */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-main)]">
             Daftar Kerjaan & Proyek
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-1">
             Pantau proyek penting, pekerjaan sampingan, dan tenggat waktu penyelesaian.
           </p>
         </div>
@@ -184,7 +184,7 @@ export function Kerjaan() {
 
       {/* Banner Pesan Sukses */}
       {successMessage && (
-        <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs transition-all animate-fadeIn">
+        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs transition-all animate-fadeIn">
           <div className="flex items-center gap-2">
             <span>✅</span>
             <span className="font-medium">{successMessage}</span>
@@ -201,7 +201,7 @@ export function Kerjaan() {
 
       {/* Banner Error jika ada */}
       {error && (
-        <div className="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-900/60 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="text-base">⚠️</span>
             <span>{error}</span>
@@ -209,7 +209,7 @@ export function Kerjaan() {
           <button
             type="button"
             onClick={fetchKerjaan}
-            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-100 dark:bg-red-900/60 hover:bg-red-200 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
           >
             Coba lagi
           </button>
@@ -219,14 +219,14 @@ export function Kerjaan() {
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5 pb-2">
         {/* Filter Tabs */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800">
+        <div className="flex items-center p-1 rounded-xl bg-[var(--bg-input)] border border-[var(--border-main)]">
           <button
             type="button"
             onClick={() => setFilter('semua')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'semua'
-                ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-amber-700 dark:text-amber-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Semua ({kerjaanList.length})
@@ -237,8 +237,8 @@ export function Kerjaan() {
             onClick={() => setFilter('belum_selesai')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'belum_selesai'
-                ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-amber-700 dark:text-amber-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Belum Selesai ({belumSelesaiCount})
@@ -249,8 +249,8 @@ export function Kerjaan() {
             onClick={() => setFilter('selesai')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'selesai'
-                ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-amber-700 dark:text-amber-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Selesai ({selesaiCount})
@@ -260,7 +260,7 @@ export function Kerjaan() {
         {/* Search Input */}
         <div className="relative sm:w-72">
           <svg
-            className="w-4 h-4 absolute left-3 top-3 text-slate-400"
+            className="w-4 h-4 absolute left-3 top-3 text-[var(--text-muted)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -277,13 +277,13 @@ export function Kerjaan() {
             placeholder="Cari judul atau deskripsi..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 shadow-2xs"
+            className="w-full pl-9 pr-8 py-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-amber-500 shadow-2xs"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              className="absolute right-2.5 top-2.5 text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
             >
               ✕
             </button>
@@ -299,7 +299,7 @@ export function Kerjaan() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 animate-pulse space-y-3"
+                className="p-5 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] animate-pulse space-y-3"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800"></div>
@@ -312,18 +312,18 @@ export function Kerjaan() {
           </div>
         ) : filteredList.length === 0 ? (
           // Keadaan Kosong
-          <div className="py-16 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 text-center flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-3xl mb-3">
+          <div className="py-16 px-4 rounded-3xl border border-dashed border-[var(--border-main)] bg-[var(--bg-card)]/40 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-3xl mb-3">
               💼
             </div>
-            <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
+            <h3 className="text-base font-bold text-[var(--text-main)]">
               {search
                 ? 'Tidak ada kerjaan yang cocok'
                 : filter === 'selesai'
                 ? 'Belum ada kerjaan yang selesai'
                 : 'Belum ada kerjaan tercatat'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-1">
+            <p className="text-xs sm:text-sm text-[var(--text-sub)] max-w-sm mt-1">
               {search
                 ? `Tidak ditemukan kerjaan dengan kata kunci "${search}".`
                 : filter === 'selesai'

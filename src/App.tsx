@@ -15,15 +15,12 @@ function AppContent() {
   // Tampilkan layar memuat saat memeriksa status otentikasi awal
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-page)] transition-colors">
         <div className="flex flex-col items-center gap-4">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-lg animate-bounce text-white"
-            style={{ backgroundColor: 'var(--color-cyan-main)' }}
-          >
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-lg animate-bounce text-white bg-[var(--primary-main)]">
             📋
           </div>
-          <div className="text-sm font-semibold tracking-wide text-slate-500 dark:text-slate-400">
+          <div className="text-sm font-semibold tracking-wide text-[var(--text-sub)]">
             Memuat Website Tugas...
           </div>
         </div>

@@ -38,32 +38,18 @@ export function Sidebar({ onItemClick }: SidebarProps) {
   }
 
   return (
-    <aside
-      className="flex flex-col h-full w-64 border-r transition-colors"
-      style={{
-        backgroundColor: 'var(--color-cyan-sidebar)',
-        borderColor: theme === 'dark' ? '#1e293b' : '#b2ebf2',
-      }}
-    >
+    <aside className="flex flex-col h-full w-64 border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] transition-colors">
       {/* Brand Header */}
-      <div className="p-6 border-b flex items-center justify-between"
-        style={{ borderColor: theme === 'dark' ? '#1e293b' : '#b2ebf2' }}
-      >
+      <div className="p-6 border-b border-[var(--sidebar-border)] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl shadow-sm text-white"
-            style={{ backgroundColor: 'var(--color-cyan-main)' }}
-          >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl shadow-sm text-white bg-[var(--primary-main)]">
             📋
           </div>
           <div>
-            <h1
-              className="text-lg font-bold leading-tight"
-              style={{ color: 'var(--color-cyan-accent)' }}
-            >
+            <h1 className="text-lg font-bold leading-tight text-[var(--sidebar-accent)]">
               Website Tugas
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-[var(--sidebar-muted)]">
               Personal Task Manager
             </p>
           </div>
@@ -71,7 +57,7 @@ export function Sidebar({ onItemClick }: SidebarProps) {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
         {MENU_ITEMS.map((item) => {
           const isActive = route === item.route
           return (
@@ -81,21 +67,14 @@ export function Sidebar({ onItemClick }: SidebarProps) {
               onClick={() => handleNav(item.path)}
               className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-left font-medium transition-all ${
                 isActive
-                  ? 'shadow-sm font-semibold'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-cyan-100/50 dark:hover:bg-slate-800/60'
+                  ? 'bg-[var(--sidebar-active)] text-[var(--sidebar-accent)] shadow-xs font-bold'
+                  : 'text-[var(--sidebar-text)] hover:bg-cyan-200/40 dark:hover:bg-slate-800/80'
               }`}
-              style={{
-                backgroundColor: isActive ? 'var(--color-cyan-active)' : undefined,
-                color: isActive ? 'var(--color-cyan-accent)' : undefined,
-              }}
             >
               <span className="text-xl leading-none">{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
+              <span className="text-sm font-semibold">{item.label}</span>
               {isActive && (
-                <span
-                  className="ml-auto w-2 h-2 rounded-full"
-                  style={{ backgroundColor: 'var(--color-cyan-main)' }}
-                />
+                <span className="ml-auto w-2 h-2 rounded-full bg-[var(--primary-main)]" />
               )}
             </button>
           )
@@ -103,13 +82,10 @@ export function Sidebar({ onItemClick }: SidebarProps) {
       </nav>
 
       {/* Footer Info & Actions */}
-      <div
-        className="p-4 border-t space-y-3"
-        style={{ borderColor: theme === 'dark' ? '#1e293b' : '#b2ebf2' }}
-      >
+      <div className="p-4 border-t border-[var(--sidebar-border)] space-y-3">
         {/* User email & Theme Toggle */}
         <div className="flex items-center justify-between px-2 py-1">
-          <div className="text-xs text-slate-600 dark:text-slate-400 truncate max-w-[140px]">
+          <div className="text-xs text-[var(--sidebar-muted)] truncate max-w-[140px] font-medium">
             {user?.email || 'Akun Pemilik'}
           </div>
           <button
@@ -117,7 +93,7 @@ export function Sidebar({ onItemClick }: SidebarProps) {
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'}
             aria-label="Toggle Mode Gelap/Terang"
-            className="p-2 rounded-lg text-sm bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:opacity-80 transition"
+            className="p-2 rounded-xl text-sm bg-[var(--bg-card)] text-[var(--text-main)] shadow-xs border border-[var(--border-main)] hover:opacity-85 transition cursor-pointer"
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
@@ -127,7 +103,7 @@ export function Sidebar({ onItemClick }: SidebarProps) {
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 hover:bg-red-100 dark:hover:bg-red-900/40 transition"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-800 dark:text-red-200 bg-red-100/80 dark:bg-red-950/60 border border-red-300 dark:border-red-800 hover:bg-red-200/80 dark:hover:bg-red-900/60 transition cursor-pointer"
         >
           <span>🚪</span>
           <span>Keluar Akun</span>

@@ -39,8 +39,8 @@ export function KerjaanItem({
     <div
       className={`group relative p-4 sm:p-5 rounded-2xl border transition-all duration-200 ${
         kerjaan.selesai
-          ? 'bg-slate-50/60 dark:bg-slate-900/30 border-slate-200/60 dark:border-slate-800/60 opacity-80'
-          : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-amber-300 dark:hover:border-amber-800/80 shadow-xs'
+          ? 'bg-[var(--bg-page)]/80 border-[var(--border-main)]/60 opacity-80'
+          : 'bg-[var(--bg-card)] border-[var(--border-main)] hover:border-amber-500/50 shadow-xs'
       }`}
     >
       <div className="flex items-start gap-3 sm:gap-4">
@@ -59,7 +59,7 @@ export function KerjaanItem({
               className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
                 kerjaan.selesai
                   ? 'bg-amber-500 border-amber-500 text-white'
-                  : 'border-slate-300 dark:border-slate-600 hover:border-amber-500 bg-white dark:bg-slate-800'
+                  : 'border-[var(--border-main)] hover:border-amber-500 bg-[var(--bg-input)]'
               } ${isToggling ? 'opacity-50 animate-pulse' : ''}`}
             >
               {kerjaan.selesai && (
@@ -84,8 +84,8 @@ export function KerjaanItem({
               <h3
                 className={`text-sm sm:text-base font-bold break-words transition-all ${
                   kerjaan.selesai
-                    ? 'line-through text-slate-400 dark:text-slate-500'
-                    : 'text-slate-900 dark:text-white'
+                    ? 'line-through text-[var(--text-muted)]'
+                    : 'text-[var(--text-main)]'
                 }`}
               >
                 {kerjaan.judul}
@@ -93,7 +93,7 @@ export function KerjaanItem({
 
               {/* Deskripsi (jika ada) */}
               {kerjaan.deskripsi && (
-                <p className="text-xs font-normal text-slate-600 dark:text-slate-400 mt-1 whitespace-pre-wrap break-words leading-relaxed">
+                <p className="text-xs font-normal text-[var(--text-sub)] mt-1 whitespace-pre-wrap break-words leading-relaxed">
                   {kerjaan.deskripsi}
                 </p>
               )}
@@ -105,7 +105,7 @@ export function KerjaanItem({
                 type="button"
                 onClick={() => onEdit(kerjaan)}
                 title="Edit kerjaan"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 dark:hover:text-amber-400 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-amber-600 hover:bg-amber-500/10 dark:hover:text-amber-400 transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -121,7 +121,7 @@ export function KerjaanItem({
                 type="button"
                 onClick={() => onHapus(kerjaan)}
                 title="Hapus kerjaan"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-600 hover:bg-red-500/10 dark:hover:text-red-400 transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -136,10 +136,10 @@ export function KerjaanItem({
           </div>
 
           {/* Badges Baris Bawah: Tanggal & Deadline */}
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="mt-3 pt-3 border-t border-[var(--border-main)] flex flex-wrap items-center justify-between gap-2 text-xs">
             {/* Tanggal Deadline WIB */}
-            <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs">
-              <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="text-[var(--text-sub)] flex items-center gap-1.5 text-xs">
+              <svg className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               {tglWib}
@@ -150,7 +150,7 @@ export function KerjaanItem({
               <span
                 className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
                   kerjaan.selesai
-                    ? 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+                    ? 'bg-[var(--bg-input)] text-[var(--text-muted)] border-[var(--border-main)]'
                     : scheme.badge
                 }`}
               >

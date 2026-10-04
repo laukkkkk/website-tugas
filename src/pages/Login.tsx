@@ -34,14 +34,14 @@ export function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-white dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-page)] text-[var(--text-main)] transition-colors">
       {/* Tombol Tema di Sudut Kanan Atas */}
       <div className="absolute top-4 right-4">
         <button
           type="button"
           onClick={toggleTheme}
           aria-label="Ganti Tema"
-          className="p-2.5 rounded-xl text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
+          className="p-2.5 rounded-xl text-sm bg-[var(--bg-card)] border border-[var(--border-main)] text-[var(--text-main)] shadow-xs hover:opacity-85 transition cursor-pointer"
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
@@ -49,28 +49,16 @@ export function Login() {
 
       <div className="w-full max-w-md">
         {/* Card Form Login */}
-        <div
-          className="p-8 sm:p-10 rounded-3xl shadow-xl border transition-all"
-          style={{
-            backgroundColor: theme === 'dark' ? '#111d2e' : '#ffffff',
-            borderColor: theme === 'dark' ? '#1e293b' : '#b2ebf2',
-          }}
-        >
+        <div className="p-8 sm:p-10 rounded-3xl shadow-xl border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-main)] transition-all">
           {/* Logo & Judul */}
           <div className="text-center mb-8">
-            <div
-              className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-3xl shadow-md text-white"
-              style={{ backgroundColor: 'var(--color-cyan-main)' }}
-            >
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center text-3xl shadow-md text-white bg-[var(--primary-main)]">
               📋
             </div>
-            <h1
-              className="text-2xl font-bold tracking-tight"
-              style={{ color: 'var(--color-cyan-accent)' }}
-            >
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--sidebar-accent)]">
               Website Tugas
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-[var(--text-sub)] mt-1 font-medium">
               Masuk ke akun pemilik untuk mengelola tugas & kerjaan
             </p>
           </div>
@@ -79,7 +67,7 @@ export function Login() {
           {errorMessage && (
             <div
               role="alert"
-              className="mb-6 p-4 rounded-xl text-sm font-medium bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 flex items-start gap-2.5 animate-in fade-in"
+              className="mb-6 p-4 rounded-xl text-sm font-semibold bg-red-100 dark:bg-red-950/80 border border-red-300 dark:border-red-800 text-red-900 dark:text-red-200 flex items-start gap-2.5"
             >
               <span className="text-base leading-none">⚠️</span>
               <span className="flex-1">{errorMessage}</span>
@@ -91,7 +79,7 @@ export function Login() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-700 dark:text-slate-300"
+                className="block text-xs font-semibold uppercase tracking-wider mb-2 text-[var(--text-sub)]"
               >
                 Email Pemilik
               </label>
@@ -103,17 +91,14 @@ export function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-900/60 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
-                style={{
-                  outlineColor: 'var(--color-cyan-main)',
-                }}
+                className="w-full px-4 py-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-700 dark:text-slate-300"
+                className="block text-xs font-semibold uppercase tracking-wider mb-2 text-[var(--text-sub)]"
               >
                 Kata Sandi
               </label>
@@ -125,27 +110,21 @@ export function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border bg-slate-50/50 dark:bg-slate-900/60 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
-                style={{
-                  outlineColor: 'var(--color-cyan-main)',
-                }}
+                className="w-full px-4 py-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl font-bold text-sm shadow-md hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50 cursor-pointer text-slate-900"
-              style={{
-                backgroundColor: 'var(--color-cyan-main)',
-              }}
+              className="w-full py-3.5 px-4 rounded-xl font-bold text-sm shadow-md hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50 cursor-pointer bg-[var(--primary-main)] text-white dark:text-slate-900"
             >
               {loading ? 'Sedang Memeriksa...' : 'Masuk ke Dashboard'}
             </button>
           </form>
 
           {/* Catatan satu akun */}
-          <div className="mt-8 text-center text-xs text-slate-400 dark:text-slate-500 border-t pt-4 border-slate-100 dark:border-slate-800">
+          <div className="mt-8 text-center text-xs text-[var(--text-sub)] border-t pt-4 border-[var(--border-main)] font-medium">
             Aplikasi privat satu pengguna pribadi.
           </div>
         </div>

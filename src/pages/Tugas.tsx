@@ -162,10 +162,10 @@ export function Tugas() {
       {/* Header Halaman & Tombol Tambah */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-main)]">
             Daftar Tugas Kuliah
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-1">
             Kelola tugas kuliah, mata kuliah, tipe, deadline, dan link pengumpulan.
           </p>
         </div>
@@ -176,7 +176,7 @@ export function Tugas() {
             setTugasToEdit(null)
             setIsFormOpen(true)
           }}
-          className="self-start sm:self-auto inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-[#00acc1] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer"
+          className="self-start sm:self-auto inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -187,7 +187,7 @@ export function Tugas() {
 
       {/* Banner Pesan Sukses */}
       {successMessage && (
-        <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs transition-all animate-fadeIn">
+        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs transition-all animate-fadeIn">
           <div className="flex items-center gap-2">
             <span>✅</span>
             <span className="font-medium">{successMessage}</span>
@@ -204,7 +204,7 @@ export function Tugas() {
 
       {/* Banner Error jika ada */}
       {error && (
-        <div className="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-900/60 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="text-base">⚠️</span>
             <span>{error}</span>
@@ -212,7 +212,7 @@ export function Tugas() {
           <button
             type="button"
             onClick={fetchTugas}
-            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-100 dark:bg-red-900/60 hover:bg-red-200 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
           >
             Coba lagi
           </button>
@@ -222,14 +222,14 @@ export function Tugas() {
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5 pb-2">
         {/* Filter Tabs */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800">
+        <div className="flex items-center p-1 rounded-xl bg-[var(--bg-input)] border border-[var(--border-main)]">
           <button
             type="button"
             onClick={() => setFilter('semua')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'semua'
-                ? 'bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Semua ({tugasList.length})
@@ -240,8 +240,8 @@ export function Tugas() {
             onClick={() => setFilter('belum_selesai')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'belum_selesai'
-                ? 'bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Belum Selesai ({belumSelesaiCount})
@@ -252,8 +252,8 @@ export function Tugas() {
             onClick={() => setFilter('selesai')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filter === 'selesai'
-                ? 'bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
+                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
             }`}
           >
             Selesai ({selesaiCount})
@@ -263,7 +263,7 @@ export function Tugas() {
         {/* Search Input */}
         <div className="relative sm:w-72">
           <svg
-            className="w-4 h-4 absolute left-3 top-3 text-slate-400"
+            className="w-4 h-4 absolute left-3 top-3 text-[var(--text-muted)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -280,13 +280,13 @@ export function Tugas() {
             placeholder="Cari tugas atau matkul..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
+            className="w-full pl-9 pr-8 py-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              className="absolute right-2.5 top-2.5 text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
             >
               ✕
             </button>
@@ -302,7 +302,7 @@ export function Tugas() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 animate-pulse space-y-3"
+                className="p-5 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] animate-pulse space-y-3"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800"></div>
@@ -315,18 +315,18 @@ export function Tugas() {
           </div>
         ) : filteredList.length === 0 ? (
           // Keadaan Kosong
-          <div className="py-16 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/50 dark:bg-slate-900/30 text-center flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-3xl mb-3">
+          <div className="py-16 px-4 rounded-3xl border border-dashed border-[var(--border-main)] bg-[var(--bg-card)]/40 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-3xl mb-3">
               📋
             </div>
-            <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
+            <h3 className="text-base font-bold text-[var(--text-main)]">
               {search
                 ? 'Tidak ada tugas yang cocok'
                 : filter === 'selesai'
                 ? 'Belum ada tugas yang selesai'
                 : 'Belum ada tugas tercatat'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-1">
+            <p className="text-xs sm:text-sm text-[var(--text-sub)] max-w-sm mt-1">
               {search
                 ? `Tidak ditemukan tugas atau matkul dengan kata kunci "${search}".`
                 : filter === 'selesai'
@@ -341,7 +341,7 @@ export function Tugas() {
                   setTugasToEdit(null)
                   setIsFormOpen(true)
                 }}
-                className="mt-4 px-4 py-2 rounded-xl bg-[#00acc1] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+                className="mt-4 px-4 py-2 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
               >
                 + Tambah Tugas Sekarang
               </button>

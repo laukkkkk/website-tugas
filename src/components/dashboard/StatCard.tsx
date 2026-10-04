@@ -25,13 +25,13 @@ export function StatCard({
 
   if (loading) {
     return (
-      <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs animate-pulse">
+      <div className="p-5 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-xs animate-pulse">
         <div className="flex items-center justify-between">
-          <div className="h-4 w-28 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
-          <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+          <div className="h-4 w-28 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+          <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
         </div>
-        <div className="h-8 w-20 bg-slate-200 dark:bg-slate-800 rounded-md mt-4"></div>
-        <div className="h-3 w-32 bg-slate-200 dark:bg-slate-800 rounded-md mt-2"></div>
+        <div className="h-8 w-20 bg-slate-200 dark:bg-slate-700 rounded-md mt-4"></div>
+        <div className="h-3 w-32 bg-slate-200 dark:bg-slate-700 rounded-md mt-2"></div>
       </div>
     )
   }
@@ -49,7 +49,7 @@ export function StatCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-wider ${scheme.title}`}>
+          <p className={`text-xs font-bold uppercase tracking-wider ${scheme.title}`}>
             {title}
           </p>
           <div className="mt-2 flex items-baseline gap-2">
@@ -66,7 +66,7 @@ export function StatCard({
       </div>
 
       {subtext && (
-        <p className={`mt-3 text-xs font-medium truncate ${scheme.subtext}`}>
+        <p className={`mt-3 text-xs font-semibold truncate ${scheme.subtext}`}>
           {subtext}
         </p>
       )}

@@ -70,21 +70,21 @@ export function NoteEditorModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden my-8"
+        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] shadow-2xl overflow-hidden my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-main)] bg-[var(--bg-page)]/50">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h2 className="text-lg font-bold text-[var(--text-main)]">
               {isEdit ? 'Buka Catatan' : 'Catatan Baru'}
             </h2>
             {isEdit && note?.updated_at && (
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-[var(--text-sub)] mt-0.5">
                 Terakhir diedit: {formatWaktuWib(note.updated_at)}
               </p>
             )}
@@ -93,7 +93,7 @@ export function NoteEditorModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)] transition-colors cursor-pointer"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -104,14 +104,14 @@ export function NoteEditorModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errors.global && (
-            <div className="p-3.5 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs">
+            <div className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300 text-xs">
               ⚠️ {errors.global}
             </div>
           )}
 
           {/* Judul Catatan */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-sub)] mb-1.5">
               Judul Catatan <span className="text-red-500">*</span>
             </label>
             <input
@@ -122,14 +122,14 @@ export function NoteEditorModal({
                 setJudul(e.target.value)
                 if (errors.judul) setErrors({ ...errors, judul: undefined })
               }}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition-all ${
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition-all ${
                 errors.judul
-                  ? 'border-red-400 focus:ring-red-400'
-                  : 'border-slate-300 dark:border-slate-700'
+                  ? 'border-red-500 focus:ring-red-400'
+                  : 'border-[var(--border-main)]'
               }`}
             />
             {errors.judul && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
+              <p className="mt-1 text-xs text-red-500 font-medium">
                 {errors.judul}
               </p>
             )}
@@ -137,7 +137,7 @@ export function NoteEditorModal({
 
           {/* Isi Catatan */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-sub)] mb-1.5">
               Isi Catatan <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -148,27 +148,27 @@ export function NoteEditorModal({
                 setIsi(e.target.value)
                 if (errors.isi) setErrors({ ...errors, isi: undefined })
               }}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition-all font-sans leading-relaxed resize-y ${
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition-all font-sans leading-relaxed resize-y ${
                 errors.isi
-                  ? 'border-red-400 focus:ring-red-400'
-                  : 'border-slate-300 dark:border-slate-700'
+                  ? 'border-red-500 focus:ring-red-400'
+                  : 'border-[var(--border-main)]'
               }`}
             />
             {errors.isi && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
+              <p className="mt-1 text-xs text-red-500 font-medium">
                 {errors.isi}
               </p>
             )}
           </div>
 
           {/* Tombol Aksi */}
-          <div className="pt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+          <div className="pt-3 flex items-center justify-between border-t border-[var(--border-main)]">
             <div>
               {isEdit && onDelete && note && (
                 <button
                   type="button"
                   onClick={() => onDelete(note)}
-                  className="px-3.5 py-2 text-xs font-semibold rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-semibold rounded-xl text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                 >
                   Hapus Catatan
                 </button>
@@ -180,7 +180,7 @@ export function NoteEditorModal({
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--bg-page)] transition-colors cursor-pointer disabled:opacity-50"
               >
                 Batal
               </button>
@@ -188,7 +188,7 @@ export function NoteEditorModal({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2 text-xs font-bold rounded-xl bg-[#00acc1] text-slate-950 hover:bg-[#0097a7] transition-all shadow-xs cursor-pointer flex items-center gap-2 disabled:opacity-60"
+                className="px-5 py-2 text-xs font-bold rounded-xl bg-[var(--primary-main)] text-slate-950 hover:bg-[#0097a7] transition-all shadow-xs cursor-pointer flex items-center gap-2 disabled:opacity-60"
               >
                 {isSubmitting && (
                   <svg className="w-3.5 h-3.5 animate-spin text-slate-950" fill="none" viewBox="0 0 24 24">

@@ -35,30 +35,30 @@ export function HapusKerjaanModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-6"
+        className="relative w-full max-w-md bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] shadow-2xl overflow-hidden p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mb-4">
+        <div className="w-12 h-12 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mb-4">
           🗑️
         </div>
 
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+        <h3 className="text-lg font-bold text-[var(--text-main)]">
           Hapus Kerjaan / Proyek?
         </h3>
 
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-2 leading-relaxed">
           Apakah Anda yakin ingin menghapus kerjaan{' '}
-          <strong className="text-slate-800 dark:text-slate-200">
+          <strong className="text-[var(--text-main)]">
             &ldquo;{kerjaan.judul}&rdquo;
           </strong>? Tindakan ini tidak dapat dibatalkan.
         </p>
 
         {error && (
-          <div className="mt-3 p-3 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs">
+          <div className="mt-3 p-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300 text-xs">
             {error}
           </div>
         )}
@@ -68,7 +68,7 @@ export function HapusKerjaanModal({
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--bg-page)] transition-colors cursor-pointer disabled:opacity-50"
           >
             Batal
           </button>

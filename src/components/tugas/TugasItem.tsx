@@ -39,8 +39,8 @@ export function TugasItem({
     <div
       className={`group relative p-4 sm:p-5 rounded-2xl border transition-all duration-200 ${
         tugas.selesai
-          ? 'bg-slate-50/60 dark:bg-slate-900/30 border-slate-200/60 dark:border-slate-800/60 opacity-80'
-          : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-cyan-300 dark:hover:border-cyan-800/80 shadow-xs'
+          ? 'bg-[var(--bg-page)]/80 border-[var(--border-main)]/60 opacity-80'
+          : 'bg-[var(--bg-card)] border-[var(--border-main)] hover:border-cyan-500/50 shadow-xs'
       }`}
     >
       <div className="flex items-start gap-3 sm:gap-4">
@@ -59,7 +59,7 @@ export function TugasItem({
               className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
                 tugas.selesai
                   ? 'bg-cyan-600 border-cyan-600 text-white'
-                  : 'border-slate-300 dark:border-slate-600 hover:border-cyan-500 bg-white dark:bg-slate-800'
+                  : 'border-[var(--border-main)] hover:border-cyan-500 bg-[var(--bg-input)]'
               } ${isToggling ? 'opacity-50 animate-pulse' : ''}`}
             >
               {tugas.selesai && (
@@ -85,8 +85,8 @@ export function TugasItem({
                 <h3
                   className={`text-sm sm:text-base font-bold break-words transition-all ${
                     tugas.selesai
-                      ? 'line-through text-slate-400 dark:text-slate-500'
-                      : 'text-slate-900 dark:text-white'
+                      ? 'line-through text-[var(--text-muted)]'
+                      : 'text-[var(--text-main)]'
                   }`}
                 >
                   {tugas.judul}
@@ -99,7 +99,7 @@ export function TugasItem({
                     target="_blank"
                     rel="noopener noreferrer"
                     title="Buka link pengumpulan tugas"
-                    className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 hover:text-cyan-700 transition-colors shrink-0"
+                    className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/20 transition-colors shrink-0"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
@@ -114,7 +114,7 @@ export function TugasItem({
               </div>
 
               {/* Mata Kuliah */}
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs font-medium text-[var(--text-sub)] mt-0.5">
                 {tugas.matkul}
               </p>
             </div>
@@ -125,7 +125,7 @@ export function TugasItem({
                 type="button"
                 onClick={() => onEdit(tugas)}
                 title="Edit tugas"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-950/40 dark:hover:text-cyan-400 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-cyan-600 hover:bg-cyan-500/10 dark:hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -141,7 +141,7 @@ export function TugasItem({
                 type="button"
                 onClick={() => onHapus(tugas)}
                 title="Hapus tugas"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-600 hover:bg-red-500/10 dark:hover:text-red-400 transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -156,16 +156,16 @@ export function TugasItem({
           </div>
 
           {/* Badges Baris Bawah: Tipe & Deadline */}
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="mt-3 pt-3 border-t border-[var(--border-main)] flex flex-wrap items-center justify-between gap-2 text-xs">
             {/* Badge Tipe Tugas */}
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-[11px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--bg-input)] text-[var(--text-sub)] border border-[var(--border-main)] font-medium text-[11px]">
                 {tugas.tipe === 'kelompok' ? '👥 Kelompok' : '👤 Individu'}
               </span>
 
               {/* Tanggal Deadline WIB */}
-              <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 text-xs">
-                <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="text-[var(--text-sub)] flex items-center gap-1.5 text-xs">
+                <svg className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 {tglWib}
@@ -177,7 +177,7 @@ export function TugasItem({
               <span
                 className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full border ${
                   tugas.selesai
-                    ? 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+                    ? 'bg-[var(--bg-input)] text-[var(--text-muted)] border-[var(--border-main)]'
                     : scheme.badge
                 }`}
               >

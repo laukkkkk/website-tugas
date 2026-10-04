@@ -45,11 +45,14 @@ Berdasarkan selisih hari dari sekarang (WIB):
 Label sisa waktu: "Hari ini", "Besok", "n hari lagi".
 
 ## Desain web
-- Dasar putih, warna kedua cyan (latar sidebar sekitar #E0F7FA, tombol utama #00ACC1, teks aksen #00606B). Sediakan juga mode gelap yang tetap kontras.
-- Kartu "Tugas belum selesai" merah, "Kerjaan belum selesai" kuning, "Deadline terdekat" mengikuti aturan warna deadline.
+- Mode terang dan gelap menyeluruh di seluruh aplikasi menggunakan class-based dark mode (`html.dark`) dan token CSS semantik (`--bg-page`, `--bg-card`, `--bg-input`, `--text-main`, `--text-sub`, `--border-main`, dll).
+- Mode terang: dasar putih/slate-50, warna kedua cyan (latar sidebar sekitar #E0F7FA, tombol utama #00838F / #00ACC1, teks aksen #00606B, teks utama #0F172A).
+- Mode gelap: latar halaman sekitar #0F172A, kartu sekitar #1E293B, border sekitar #334155. Teks utama harus putih terang (#FFFFFF), teks sekunder minimal #CBD5E1 (tidak boleh redup).
+- Seluruh kombinasi teks dan latar belakang wajib memenuhi standar rasio kontras WCAG AA (>= 4.5:1).
+- Kartu ringkasan dan badge deadline (merah, kuning, hijau) harus memiliki varian mode gelap dengan latar belakang gelap bertinta (dark tinted) dan teks kontras tinggi.
 - Laptop: sidebar kiri. HP: sidebar tersembunyi, dibuka lewat tombol garis tiga.
 - Daftar tugas dan kerjaan diurutkan per deadline (bukan per mata kuliah). Yang selesai turun ke bawah dan judulnya dicoret.
-- Pastikan kontras teks dan latar selalu terbaca.
+- Semua halaman, modal, form, dan fitur baru WAJIB menggunakan token warna semantik, tidak boleh menggunakan warna teks/latar hardcoded yang mengabaikan tema gelap.
 
 ## Environment variables
 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (server saja), VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (web), BOT_TOKEN, OWNER_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, REMINDER_SECRET

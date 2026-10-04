@@ -14,7 +14,7 @@ export function Layout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+    <div className="flex h-screen w-full overflow-hidden bg-[var(--bg-page)] text-[var(--text-main)] transition-colors">
       {/* 1. Sidebar untuk Layar Laptop / Desktop (Tetap di Sisi Kiri) */}
       <div className="hidden md:flex flex-shrink-0 h-full">
         <Sidebar />
@@ -43,7 +43,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <Header onToggleSidebar={handleToggleDrawer} />
 
         {/* Konten Halaman */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[var(--bg-page)]">
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </div>

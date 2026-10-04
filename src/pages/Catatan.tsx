@@ -192,10 +192,10 @@ export function Catatan() {
       {/* Header Halaman */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-main)]">
             Catatan & To-do
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-1">
             Simpan rangkuman catatan kuliah dan checklist to-do cepat harian Anda.
           </p>
         </div>
@@ -204,7 +204,7 @@ export function Catatan() {
           type="button"
           onClick={fetchData}
           disabled={loading}
-          className="self-start sm:self-auto inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors shadow-2xs cursor-pointer disabled:opacity-60"
+          className="self-start sm:self-auto inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-main)] hover:bg-[var(--bg-input)] transition-colors shadow-2xs cursor-pointer disabled:opacity-60"
         >
           <svg className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-600' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -215,7 +215,7 @@ export function Catatan() {
 
       {/* Banner Notifikasi Sukses */}
       {successMessage && (
-        <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs animate-fadeIn">
+        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-2xs animate-fadeIn">
           <div className="flex items-center gap-2">
             <span>✅</span>
             <span className="font-medium">{successMessage}</span>
@@ -232,7 +232,7 @@ export function Catatan() {
 
       {/* Banner Error */}
       {error && (
-        <div className="p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-900/60 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-200 text-xs sm:text-sm flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span>⚠️</span>
             <span>{error}</span>
@@ -240,7 +240,7 @@ export function Catatan() {
           <button
             type="button"
             onClick={fetchData}
-            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-100 dark:bg-red-900/60 hover:bg-red-200 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
+            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
           >
             Coba lagi
           </button>
@@ -250,16 +250,16 @@ export function Catatan() {
       {/* Grid Dua Kolom di Laptop, Satu Kolom di HP */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* ==================== KOLOM KIRI: CATATAN ==================== */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
+        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
           {/* Header Kolom Catatan */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">📝</span>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-bold text-[var(--text-main)]">
                   Catatan
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[var(--text-sub)] mt-0.5">
                   {notes.length} catatan tersimpan
                 </p>
               </div>
@@ -271,7 +271,7 @@ export function Catatan() {
                 setSelectedNote(null)
                 setIsEditorOpen(true)
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00acc1] hover:bg-[#0097a7] text-slate-950 font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -287,7 +287,7 @@ export function Catatan() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 animate-pulse space-y-2"
+                    className="p-4 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-input)]/40 animate-pulse space-y-2"
                   >
                     <div className="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
                     <div className="h-3 w-3/4 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
@@ -297,13 +297,13 @@ export function Catatan() {
               </div>
             ) : notes.length === 0 ? (
               <div className="py-16 text-center flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-2xl mb-3">
+                <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-2xl mb-3">
                   🗒️
                 </div>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                <h3 className="text-sm font-bold text-[var(--text-main)]">
                   Belum ada catatan
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">
+                <p className="text-xs text-[var(--text-sub)] mt-1 max-w-xs">
                   Simpan rangkuman kuliah, ide proyek, atau referensi penting Anda di sini.
                 </p>
                 <button
@@ -312,7 +312,7 @@ export function Catatan() {
                     setSelectedNote(null)
                     setIsEditorOpen(true)
                   }}
-                  className="mt-4 px-3.5 py-1.5 rounded-xl bg-[#00acc1] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+                  className="mt-4 px-3.5 py-1.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
                 >
                   + Tulis Catatan Pertama
                 </button>
@@ -326,14 +326,14 @@ export function Catatan() {
                       setSelectedNote(note)
                       setIsEditorOpen(true)
                     }}
-                    className="group relative p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/30 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 hover:border-cyan-300 dark:hover:border-cyan-800 transition-all cursor-pointer"
+                    className="group relative p-4 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-cyan-500/50 transition-all cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-cyan-700 dark:group-hover:text-cyan-400 transition-colors">
+                        <h3 className="text-sm font-bold text-[var(--text-main)] truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                           {note.judul}
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[var(--text-sub)] mt-1 line-clamp-2 leading-relaxed">
                           {note.isi}
                         </p>
                       </div>
@@ -346,7 +346,7 @@ export function Catatan() {
                           setNoteToDelete(note)
                         }}
                         title="Hapus catatan"
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition-colors cursor-pointer opacity-80 group-hover:opacity-100"
+                        className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-600 hover:bg-red-500/10 dark:hover:text-red-400 transition-colors cursor-pointer opacity-80 group-hover:opacity-100"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path
@@ -359,7 +359,7 @@ export function Catatan() {
                       </button>
                     </div>
 
-                    <div className="mt-3 pt-2.5 border-t border-slate-200/50 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
+                    <div className="mt-3 pt-2.5 border-t border-[var(--border-main)] flex items-center justify-between text-[11px] text-[var(--text-muted)]">
                       <span>Terakhir diedit: {formatWaktuWib(note.updated_at || note.created_at)}</span>
                       <span className="font-medium text-cyan-600 dark:text-cyan-400 flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                         Buka &rarr;
@@ -373,16 +373,16 @@ export function Catatan() {
         </div>
 
         {/* ==================== KOLOM KANAN: TO-DO ==================== */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
+        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
           {/* Header Kolom To-do */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">✅</span>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-bold text-[var(--text-main)]">
                   To-do Cepat
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[var(--text-sub)] mt-0.5">
                   {pendingTodosCount} to-do aktif
                 </p>
               </div>
@@ -397,12 +397,12 @@ export function Catatan() {
               value={newTodoText}
               onChange={(e) => setNewTodoText(e.target.value)}
               disabled={isAddingTodo}
-              className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
+              className="flex-1 px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
             />
             <button
               type="submit"
               disabled={isAddingTodo || !newTodoText.trim()}
-              className="px-4 py-2.5 rounded-xl bg-[#00acc1] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              className="px-4 py-2.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-colors cursor-pointer disabled:opacity-50 shrink-0"
             >
               {isAddingTodo ? '...' : '+ Tambah'}
             </button>
@@ -415,7 +415,7 @@ export function Catatan() {
                 {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 animate-pulse flex items-center gap-3"
+                    className="p-3.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)]/40 animate-pulse flex items-center gap-3"
                   >
                     <div className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800"></div>
                     <div className="h-3 w-44 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
@@ -424,13 +424,13 @@ export function Catatan() {
               </div>
             ) : sortedTodos.length === 0 ? (
               <div className="py-16 text-center flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl mb-3">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--bg-input)] text-[var(--text-muted)] flex items-center justify-center text-2xl mb-3">
                   🎯
                 </div>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                <h3 className="text-sm font-bold text-[var(--text-main)]">
                   Semua to-do selesai!
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">
+                <p className="text-xs text-[var(--text-sub)] mt-1 max-w-xs">
                   Tidak ada checklist to-do saat ini. Tulis rencana kecilmu di kolom atas.
                 </p>
               </div>

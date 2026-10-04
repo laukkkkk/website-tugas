@@ -38,8 +38,8 @@ export function TelegramPreviewCard({
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs flex flex-col h-full">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
+    <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5 sm:p-6 shadow-xs flex flex-col h-full text-[var(--text-main)] transition-colors">
+      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-[#229ED9]/15 text-[#229ED9] flex items-center justify-center font-bold text-sm">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -47,10 +47,10 @@ export function TelegramPreviewCard({
             </svg>
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
               <span>Pesan Telegram jam 09.00</span>
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-[var(--text-sub)] mt-0.5 font-medium">
               Pratinjau otomatis reminder harian via Bot
             </p>
           </div>
@@ -61,18 +61,18 @@ export function TelegramPreviewCard({
             type="button"
             onClick={handleCopy}
             title="Salin teks pesan"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border border-[var(--border-main)] bg-[var(--bg-page)] text-[var(--text-main)] hover:opacity-85 transition-colors cursor-pointer"
           >
             {copied ? (
               <>
                 <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-emerald-600 dark:text-emerald-400">Tersalin!</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">Tersalin!</span>
               </>
             ) : (
               <>
-                <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 <span>Salin</span>
@@ -84,7 +84,7 @@ export function TelegramPreviewCard({
 
       <div className="mt-4 flex-1 flex flex-col justify-center">
         {loading ? (
-          <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 animate-pulse space-y-3">
+          <div className="p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-page)] animate-pulse space-y-3">
             <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
             <div className="h-3 w-3/4 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
             <div className="h-3 w-5/6 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
@@ -92,19 +92,19 @@ export function TelegramPreviewCard({
           </div>
         ) : !message ? (
           <div className="py-10 text-center flex flex-col items-center justify-center">
-            <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-xl mb-3">
+            <div className="w-12 h-12 rounded-xl bg-[var(--bg-muted)] text-[var(--text-sub)] flex items-center justify-center text-xl mb-3">
               🔕
             </div>
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+            <p className="text-sm font-bold text-[var(--text-main)]">
               Tidak ada pesan pengingat
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">
+            <p className="text-xs text-[var(--text-sub)] mt-1 max-w-xs font-medium">
               Bot tidak akan mengirimkan reminder jam 09.00 WIB karena tidak ada tugas atau kerjaan yang menunggu.
             </p>
           </div>
         ) : (
-          <div className="relative rounded-xl border border-[#229ED9]/30 dark:border-[#229ED9]/20 bg-[#F4F9FD] dark:bg-[#16212b] p-4 font-sans text-xs sm:text-sm text-slate-800 dark:text-slate-100 leading-relaxed shadow-xs">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-[#229ED9] pb-2 mb-2 border-b border-[#229ED9]/20">
+          <div className="relative rounded-xl border border-[#229ED9]/40 dark:border-[#229ED9]/30 bg-[#F4F9FD] dark:bg-[#16212b] p-4 font-sans text-xs sm:text-sm text-slate-900 dark:text-slate-100 leading-relaxed shadow-xs">
+            <div className="flex items-center justify-between text-[11px] font-bold text-[#00606B] dark:text-[#80DEEA] pb-2 mb-2 border-b border-[#229ED9]/20">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#229ED9] animate-pulse"></span>
                 Format Telegram (HTML/Markdown)
@@ -112,7 +112,7 @@ export function TelegramPreviewCard({
               <span>09.00 WIB</span>
             </div>
 
-            <div className="whitespace-pre-wrap break-words font-mono text-xs text-slate-800 dark:text-slate-200 leading-relaxed overflow-x-auto">
+            <div className="whitespace-pre-wrap break-words font-mono text-xs text-slate-900 dark:text-slate-100 leading-relaxed overflow-x-auto font-medium">
               {message}
             </div>
           </div>
