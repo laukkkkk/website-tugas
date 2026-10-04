@@ -1,36 +1,86 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { webhookCallback } from 'grammy'
 import { getBot } from '../server/bot/bot.js'
 
-let webhookHandler: ((req: any, res: any) => Promise<any>) | null = null
+let webhookHandler: ((req: Request) => Promise<Response>) | null = null
 
 /**
- * Endpoint webhook Telegram untuk Vercel Serverless Function.
- * Menerima update dari Telegram Bot API dan memverifikasi secret token.
+ * Mereset instance webhookHandler (berguna untuk keperluan testing).
  */
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export function resetBotWebhookHandler(): void {
+  webhookHandler = null
+}
+
+function getWebhookHandler(secretToken?: string): (req: Request) => Promise<Response> {
+  if (!webhookHandler) {
+    const bot = getBot()
+    webhookHandler = webhookCallback(bot, 'std/http', {
+      onTimeout: 'return',
+      timeoutMilliseconds: 10_000,
+      secretToken,
+    })
+  }
+  return webhookHandler
+}
+
+/**
+ * Handler HTTP POST untuk webhook update Telegram.
+ * Menggunakan Web Standard Request & Response yang cocok untuk Vercel Serverless Function.
+ */
+export async function POST(req: Request): Promise<Response> {
   // Hanya metode POST yang diizinkan untuk update Telegram
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' })
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 
   // Verifikasi header X-Telegram-Bot-Api-Secret-Token
   const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET
-  const secretHeader = req.headers['x-telegram-bot-api-secret-token']
+  const secretHeader = req.headers.get('x-telegram-bot-api-secret-token')
 
-  if (!expectedSecret || secretHeader !== expectedSecret) {
-    return res.status(401).json({ error: 'Unauthorized: invalid secret token' })
+  if (!expectedSecret || !secretHeader || secretHeader !== expectedSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized: invalid secret token' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 
-  // Inisialisasi webhookCallback grammY (lazy singleton)
-  if (!webhookHandler) {
-    const bot = getBot()
-    webhookHandler = webhookCallback(bot, 'express', {
-      onTimeout: 'return',
-      timeoutMilliseconds: 10_000,
-      secretToken: expectedSecret,
-    }) as any
-  }
+  try {
+    const handler = getWebhookHandler(expectedSecret)
+    return await handler(req)
+  } catch (err: unknown) {
+    // Catat error ke log tanpa mencetak token atau rahasia
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    console.error('[Bot Webhook Error]:', errorMessage)
 
-  return webhookHandler!(req, res)
+    // Balas 200 OK supaya Telegram tidak mengirim ulang update yang sama berulang-ulang
+    return new Response(JSON.stringify({ ok: true, note: 'Error handled' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}
+
+/**
+ * Handler HTTP GET membalas 405 Method Not Allowed.
+ */
+export async function GET(): Promise<Response> {
+  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+    status: 405,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+/**
+ * Default export handler untuk kompatibilitas Vercel Serverless Function.
+ */
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+  return POST(req)
 }
