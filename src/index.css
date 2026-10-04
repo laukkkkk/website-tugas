@@ -4,6 +4,14 @@
   --color-cyan-sidebar: #e0f7fa;
   --color-cyan-main: #00acc1;
   --color-cyan-accent: #00606b;
+  --color-cyan-active: #b2ebf2;
+}
+
+.dark {
+  --color-cyan-sidebar: #111d2e;
+  --color-cyan-main: #00acc1;
+  --color-cyan-accent: #80deea;
+  --color-cyan-active: #192a42;
 }
 
 body {
@@ -12,11 +20,11 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #ffffff;
   color: #1f2937;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #0f172a;
-    color: #f8fafc;
-  }
+.dark body,
+html.dark body {
+  background-color: #0b1320;
+  color: #f1f5f9;
 }

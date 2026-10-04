@@ -9,7 +9,12 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "cek-db": "tsx scripts/cek-db.ts"
+    "cek-db": "tsx scripts/cek-db.ts",
+    "bot:dev": "tsx scripts/bot-dev.ts",
+    "cek:rahasia": "tsx scripts/cek-rahasia.ts",
+    "webhook:set": "tsx scripts/set-webhook.ts",
+    "webhook:del": "tsx scripts/set-webhook.ts --delete",
+    "webhook:info": "tsx scripts/set-webhook.ts --info"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
