@@ -43,7 +43,7 @@ export interface RenderListResult {
 export async function renderListContent(
   filter: ListFilter = 'all'
 ): Promise<RenderListResult> {
-  const keyboard = new InlineKeyboard()
+  const buttonRows: { text: string; callback_data: string }[][] = []
 
   let tugasList: Tugas[] = []
   let kerjaanList: Kerjaan[] = []
@@ -89,7 +89,7 @@ export async function renderListContent(
       lines.push(itemText)
 
       const shortTitle = t.judul.length > 25 ? `${t.judul.slice(0, 24)}…` : t.judul
-      keyboard.text(`✅ Selesai: ${shortTitle}`, `selesai:tugas:${t.id}:${filter}`).row()
+      buttonRows.push([{ text: `✅ Selesai: ${shortTitle}`, callback_data: `selesai:tugas:${t.id}:${filter}` }])
     })
     sections.push(lines.join('\n\n'))
   } else if (filter === 'tugas') {
@@ -114,7 +114,7 @@ export async function renderListContent(
       lines.push(itemText)
 
       const shortTitle = k.judul.length > 25 ? `${k.judul.slice(0, 24)}…` : k.judul
-      keyboard.text(`✅ Selesai: ${shortTitle}`, `selesai:kerjaan:${k.id}:${filter}`).row()
+      buttonRows.push([{ text: `✅ Selesai: ${shortTitle}`, callback_data: `selesai:kerjaan:${k.id}:${filter}` }])
     })
     sections.push(lines.join('\n\n'))
   } else if (filter === 'kerjaan') {
@@ -123,12 +123,9 @@ export async function renderListContent(
 
   const fullText = sections.join('\n\n───────────────\n\n')
 
-  // Bersihkan baris kosong pada inline keyboard jika ada
-  keyboard.inline_keyboard = keyboard.inline_keyboard.filter((row) => row.length > 0)
-
   return {
     text: fullText,
-    keyboard: keyboard.inline_keyboard.length > 0 ? keyboard : undefined,
+    keyboard: buttonRows.length > 0 ? InlineKeyboard.from(buttonRows) : undefined,
   }
 }
 

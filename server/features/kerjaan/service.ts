@@ -94,7 +94,7 @@ export async function ambilSemua(
     throw new Error(error.message)
   }
 
-  return (data || []) as Kerjaan
+  return (data || []) as Kerjaan[]
 }
 
 /**
@@ -114,7 +114,7 @@ export async function ambilBelumSelesai(
     throw new Error(error.message)
   }
 
-  return (data || []) as Kerjaan
+  return (data || []) as Kerjaan[]
 }
 
 /**

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import handler from './health'
+import handler from '../../api/health'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 describe('GET /api/health', () => {

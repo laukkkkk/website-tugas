@@ -24,7 +24,7 @@ export async function renderTodosList(): Promise<{ text: string; keyboard?: Inli
   }
 
   const lines = ['☑️ *DAFTAR TO-DO*', '']
-  const keyboard = new InlineKeyboard()
+  const buttonRows: { text: string; callback_data: string }[][] = []
 
   todos.forEach((todo: Todo, index: number) => {
     const statusIcon = todo.selesai ? '✅' : '⬜'
@@ -32,21 +32,18 @@ export async function renderTodosList(): Promise<{ text: string; keyboard?: Inli
     lines.push(`${index + 1}. ${statusIcon} ${statusText}`)
 
     const shortTeks = todo.teks.length > 20 ? `${todo.teks.slice(0, 19)}…` : todo.teks
-    keyboard
-      .text(`${statusIcon} ${index + 1}. ${shortTeks}`, `todo:toggle:${todo.id}`)
-      .text('🗑️', `todo:konfirmasi_hapus:${todo.id}`)
-      .row()
+    buttonRows.push([
+      { text: `${statusIcon} ${index + 1}. ${shortTeks}`, callback_data: `todo:toggle:${todo.id}` },
+      { text: '🗑️', callback_data: `todo:konfirmasi_hapus:${todo.id}` },
+    ])
   })
 
   lines.push('')
   lines.push('Tekan tombol item untuk ceklis/unceklis, atau tombol 🗑️ untuk menghapus.')
 
-  // Bersihkan baris kosong di keyboard jika ada
-  keyboard.inline_keyboard = keyboard.inline_keyboard.filter((row) => row.length > 0)
-
   return {
     text: lines.join('\n'),
-    keyboard,
+    keyboard: InlineKeyboard.from(buttonRows),
   }
 }
 

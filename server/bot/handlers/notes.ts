@@ -23,23 +23,20 @@ export async function renderNotesList(): Promise<{ text: string; keyboard?: Inli
   }
 
   const lines = ['📑 *DAFTAR CATATAN TERSIMPAN*', '']
-  const keyboard = new InlineKeyboard()
+  const buttonRows: { text: string; callback_data: string }[][] = []
 
   notes.forEach((note: Note, index: number) => {
     lines.push(`${index + 1}. *${note.judul}*`)
     const shortTitle = note.judul.length > 25 ? `${note.judul.slice(0, 24)}…` : note.judul
-    keyboard.text(`📖 ${index + 1}. ${shortTitle}`, `note:baca:${note.id}`).row()
+    buttonRows.push([{ text: `📖 ${index + 1}. ${shortTitle}`, callback_data: `note:baca:${note.id}` }])
   })
 
   lines.push('')
   lines.push('Klik tombol di bawah untuk melihat isi catatan:')
 
-  // Bersihkan baris kosong di keyboard
-  keyboard.inline_keyboard = keyboard.inline_keyboard.filter((row) => row.length > 0)
-
   return {
     text: lines.join('\n'),
-    keyboard,
+    keyboard: InlineKeyboard.from(buttonRows),
   }
 }
 

@@ -61,7 +61,7 @@ export async function ambilSemua(
     throw new Error(error.message)
   }
 
-  return (data || []) as Note
+  return (data || []) as Note[]
 }
 
 /**

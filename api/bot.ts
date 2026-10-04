@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { webhookCallback } from 'grammy'
 import { getBot } from '../server/bot/bot.js'
 
-let webhookHandler: ReturnType<typeof webhookCallback> | null = null
+let webhookHandler: ((req: any, res: any) => Promise<any>) | null = null
 
 /**
  * Endpoint webhook Telegram untuk Vercel Serverless Function.
@@ -29,8 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       onTimeout: 'return',
       timeoutMilliseconds: 10_000,
       secretToken: expectedSecret,
-    })
+    }) as any
   }
 
-  return webhookHandler(req, res)
+  return webhookHandler!(req, res)
 }

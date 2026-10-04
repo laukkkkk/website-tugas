@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit",
     "cek-db": "tsx scripts/cek-db.ts",
     "bot:dev": "tsx scripts/bot-dev.ts",
     "cek:rahasia": "tsx scripts/cek-rahasia.ts",
