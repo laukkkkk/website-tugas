@@ -2,9 +2,13 @@ import { describe, it, expect } from 'vitest'
 import {
   hitungDeadlineTerdekat,
   ambilTugasTerdekat,
+  potongTugasAktif,
+  potongKerjaanAktif,
+  potongCatatanTerbaru,
+  potongTodosAktif,
 } from './dashboard-helpers.js'
 import { susunPesanReminder } from '../../shared/pesan-reminder.js'
-import type { Tugas, Kerjaan } from '../types/index.js'
+import type { Tugas, Kerjaan, Note, Todo } from '../types/index.js'
 
 describe('Dashboard Helpers', () => {
   const sekarang = new Date('2026-10-04T09:00:00+07:00')
@@ -162,6 +166,130 @@ describe('Dashboard Helpers', () => {
 
       expect(res.label).toBe('16 hari lagi')
       expect(res.warna).toBe('netral')
+    })
+  })
+
+  describe('potongTugasAktif', () => {
+    it('mengurutkan tugas berdasarkan deadline terdekat dan mengabaikan yang selesai', () => {
+      const hasil = potongTugasAktif(sampleTugas, 15)
+      expect(hasil.totalAktif).toBe(4)
+      expect(hasil.items.length).toBe(4)
+      expect(hasil.sisa).toBe(0)
+      expect(hasil.keteranganSisa).toBeNull()
+      expect(hasil.items[0].id).toBe('t-1') // 5 Okt
+      expect(hasil.items[1].id).toBe('t-2') // 7 Okt
+      expect(hasil.items[2].id).toBe('t-3') // 10 Okt
+      expect(hasil.items[3].id).toBe('t-4') // 20 Okt
+    })
+
+    it('memotong 20 tugas menjadi 15 tugas terdekat plus keterangan "+ 5 tugas lainnya"', () => {
+      // Buat 20 tugas aktif dengan deadline bertingkat
+      const duapuluhTugas: Tugas[] = Array.from({ length: 20 }, (_, i) => ({
+        id: `t-gen-${i}`,
+        judul: `Tugas ${i + 1}`,
+        matkul: 'Matkul Test',
+        tipe: 'individu',
+        link_pengumpulan: null,
+        deadline: new Date(new Date('2026-10-05T00:00:00Z').getTime() + i * 86400000).toISOString(),
+        selesai: false,
+        created_at: '2026-10-01T00:00:00Z',
+      }))
+
+      const hasil = potongTugasAktif(duapuluhTugas, 15)
+      expect(hasil.totalAktif).toBe(20)
+      expect(hasil.items.length).toBe(15)
+      expect(hasil.sisa).toBe(5)
+      expect(hasil.keteranganSisa).toBe('+ 5 tugas lainnya')
+      // Urutan pertama adalah tugas dengan deadline paling awal
+      expect(hasil.items[0].judul).toBe('Tugas 1')
+      expect(hasil.items[14].judul).toBe('Tugas 15')
+    })
+
+    it('mengembalikan keteranganSisa null jika jumlah tugas <= batas', () => {
+      const hasil = potongTugasAktif(sampleTugas.slice(0, 2), 15)
+      expect(hasil.totalAktif).toBe(2)
+      expect(hasil.items.length).toBe(2)
+      expect(hasil.sisa).toBe(0)
+      expect(hasil.keteranganSisa).toBeNull()
+    })
+  })
+
+  describe('potongKerjaanAktif', () => {
+    it('mengurutkan kerjaan per deadline terdekat dan menghasilkan sisa jika > batas', () => {
+      const banyakKerjaan: Kerjaan[] = Array.from({ length: 18 }, (_, i) => ({
+        id: `k-gen-${i}`,
+        judul: `Kerjaan ${i + 1}`,
+        deskripsi: null,
+        deadline: new Date(new Date('2026-10-05T00:00:00Z').getTime() + i * 86400000).toISOString(),
+        selesai: false,
+        created_at: '2026-10-01T00:00:00Z',
+      }))
+
+      const hasil = potongKerjaanAktif(banyakKerjaan, 15)
+      expect(hasil.totalAktif).toBe(18)
+      expect(hasil.items.length).toBe(15)
+      expect(hasil.sisa).toBe(3)
+      expect(hasil.keteranganSisa).toBe('+ 3 kerjaan lainnya')
+      expect(hasil.items[0].judul).toBe('Kerjaan 1')
+    })
+  })
+
+  describe('potongCatatanTerbaru', () => {
+    it('mengurutkan catatan berdasarkan waktu terakhir diedit (updated_at/created_at descending)', () => {
+      const sampleNotes: Note[] = [
+        {
+          id: 'n-1',
+          isi: 'Catatan Lama\nIsi lama',
+          created_at: '2026-10-01T10:00:00Z',
+          updated_at: '2026-10-01T10:00:00Z',
+        },
+        {
+          id: 'n-2',
+          isi: 'Catatan Sangat Baru\nIsi baru',
+          created_at: '2026-10-03T10:00:00Z',
+          updated_at: '2026-10-04T12:00:00Z', // Paling baru
+        },
+        {
+          id: 'n-3',
+          isi: 'Catatan Menengah\nIsi menengah',
+          created_at: '2026-10-02T10:00:00Z',
+          updated_at: '2026-10-02T10:00:00Z',
+        },
+      ]
+
+      const hasil = potongCatatanTerbaru(sampleNotes, 2)
+      expect(hasil.totalAktif).toBe(3)
+      expect(hasil.items.length).toBe(2)
+      expect(hasil.items[0].id).toBe('n-2') // n-2 paling baru diedit
+      expect(hasil.items[1].id).toBe('n-3')
+      expect(hasil.sisa).toBe(1)
+      expect(hasil.keteranganSisa).toBe('+ 1 catatan lainnya')
+    })
+  })
+
+  describe('potongTodosAktif', () => {
+    it('mengabaikan to-do yang selesai dan memotong sesuai batas dengan sisa', () => {
+      const sampleTodos: Todo[] = [
+        ...Array.from({ length: 12 }, (_, i) => ({
+          id: `todo-${i}`,
+          teks: `To-do ${i + 1}`,
+          selesai: false,
+          created_at: new Date(new Date('2026-10-01T00:00:00Z').getTime() + i * 1000).toISOString(),
+        })),
+        {
+          id: 'todo-selesai',
+          teks: 'Sudah Selesai',
+          selesai: true,
+          created_at: '2026-10-01T00:00:00Z',
+        },
+      ]
+
+      const hasil = potongTodosAktif(sampleTodos, 10)
+      expect(hasil.totalAktif).toBe(12)
+      expect(hasil.items.length).toBe(10)
+      expect(hasil.sisa).toBe(2)
+      expect(hasil.keteranganSisa).toBe('+ 2 to-do lainnya')
+      expect(hasil.items.every((t) => !t.selesai)).toBe(true)
     })
   })
 

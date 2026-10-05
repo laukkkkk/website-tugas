@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import type { Note } from '../../types/index.js'
 import { formatWaktuWib, validasiFormNote } from '../../lib/catatan-helpers.js'
+import { Button } from '../Button.js'
 
 interface NoteEditorModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (payload: { judul: string; isi: string }) => Promise<void>
+  onSubmit: (payload: { isi: string }) => Promise<void>
   onDelete?: (note: Note) => void
   note?: Note | null
 }
@@ -17,10 +18,10 @@ export function NoteEditorModal({
   onDelete,
   note = null,
 }: NoteEditorModalProps) {
-  const [judul, setJudul] = useState('')
   const [isi, setIsi] = useState('')
-  const [errors, setErrors] = useState<{ judul?: string; isi?: string; global?: string }>({})
+  const [errors, setErrors] = useState<{ isi?: string; global?: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (!isOpen) {
@@ -29,13 +30,17 @@ export function NoteEditorModal({
     }
 
     if (note) {
-      setJudul(note.judul)
       setIsi(note.isi)
     } else {
-      setJudul('')
       setIsi('')
     }
     setErrors({})
+
+    // Fokus otomatis ke textarea saat modal terbuka
+    const timer = setTimeout(() => {
+      textareaRef.current?.focus()
+    }, 50)
+    return () => clearTimeout(timer)
   }, [isOpen, note])
 
   if (!isOpen) return null
@@ -45,7 +50,7 @@ export function NoteEditorModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const validationErrors = validasiFormNote(judul, isi)
+    const validationErrors = validasiFormNote(isi)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
       return
@@ -56,7 +61,6 @@ export function NoteEditorModal({
 
     try {
       await onSubmit({
-        judul: judul.trim(),
         isi: isi.trim(),
       })
       onClose()
@@ -109,39 +113,15 @@ export function NoteEditorModal({
             </div>
           )}
 
-          {/* Judul Catatan */}
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-sub)] mb-1.5">
-              Judul Catatan <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Misal: Rangkuman Materi Pertemuan 5"
-              value={judul}
-              onChange={(e) => {
-                setJudul(e.target.value)
-                if (errors.judul) setErrors({ ...errors, judul: undefined })
-              }}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 transition-all ${
-                errors.judul
-                  ? 'border-red-500 focus:ring-red-400'
-                  : 'border-[var(--border-main)]'
-              }`}
-            />
-            {errors.judul && (
-              <p className="mt-1 text-xs text-red-500 font-medium">
-                {errors.judul}
-              </p>
-            )}
-          </div>
-
           {/* Isi Catatan */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-sub)] mb-1.5">
               Isi Catatan <span className="text-red-500">*</span>
             </label>
             <textarea
-              rows={10}
+              ref={textareaRef}
+              autoFocus
+              rows={12}
               placeholder="Tuliskan catatan, ide, atau referensimu di sini..."
               value={isi}
               onChange={(e) => {
@@ -165,39 +145,38 @@ export function NoteEditorModal({
           <div className="pt-3 flex items-center justify-between border-t border-[var(--border-main)]">
             <div>
               {isEdit && onDelete && note && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onDelete(note)}
-                  className="px-3.5 py-2 text-xs font-semibold rounded-xl text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                  className="text-red-600 dark:text-red-400 hover:bg-red-500/10"
                 >
                   Hapus Catatan
-                </button>
+                </Button>
               )}
             </div>
 
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--bg-page)] transition-colors cursor-pointer disabled:opacity-50"
               >
                 Batal
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="md"
                 disabled={isSubmitting}
-                className="px-5 py-2 text-xs font-bold rounded-xl bg-[var(--primary-main)] text-slate-950 hover:bg-[#0097a7] transition-all shadow-xs cursor-pointer flex items-center gap-2 disabled:opacity-60"
+                isLoading={isSubmitting}
               >
-                {isSubmitting && (
-                  <svg className="w-3.5 h-3.5 animate-spin text-slate-950" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                )}
-                <span>{isEdit ? 'Simpan Catatan' : 'Tambah Catatan'}</span>
-              </button>
+                {isEdit ? 'Simpan Catatan' : 'Tambah Catatan'}
+              </Button>
             </div>
           </div>
         </form>

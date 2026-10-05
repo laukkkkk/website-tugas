@@ -53,7 +53,7 @@ describe('API /api/notes', () => {
   }
 
   it('GET /api/notes returns list of notes', async () => {
-    const mockNotes = [{ id: '1', judul: 'Catatan Kuliah' }]
+    const mockNotes = [{ id: '1', isi: 'Catatan Kuliah' }]
     vi.mocked(ambilSemua).mockResolvedValueOnce(mockNotes as any)
 
     const { res, statusMock, jsonMock } = createMockRes()
@@ -69,14 +69,14 @@ describe('API /api/notes', () => {
   })
 
   it('POST /api/notes creates note and returns 201', async () => {
-    const created = { id: 'new-note', judul: 'Judul Baru', isi: 'Isi' }
+    const created = { id: 'new-note', isi: 'Isi Catatan Baru' }
     vi.mocked(tambah).mockResolvedValueOnce(created as any)
 
     const { res, statusMock, jsonMock } = createMockRes()
     const req = {
       method: 'POST',
       headers: { authorization: 'Bearer valid-token' },
-      body: { judul: 'Judul Baru', isi: 'Isi' },
+      body: { isi: 'Isi Catatan Baru' },
     } as unknown as VercelRequest
 
     await handler(req, res)
@@ -86,7 +86,7 @@ describe('API /api/notes', () => {
   })
 
   it('POST /api/notes returns 400 when validation fails', async () => {
-    vi.mocked(tambah).mockRejectedValueOnce(new ValidationError('Judul catatan wajib diisi.'))
+    vi.mocked(tambah).mockRejectedValueOnce(new ValidationError('Isi catatan wajib diisi.'))
 
     const { res, statusMock, jsonMock } = createMockRes()
     const req = {
@@ -100,7 +100,7 @@ describe('API /api/notes', () => {
     expect(statusMock).toHaveBeenCalledWith(400)
     expect(jsonMock).toHaveBeenCalledWith({
       error: 'Bad Request',
-      message: 'Judul catatan wajib diisi.',
+      message: 'Isi catatan wajib diisi.',
     })
   })
 })

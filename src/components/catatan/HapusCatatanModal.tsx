@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import type { Note } from '../../types/index.js'
+import { ringkasanCatatan } from '../../../shared/catatan.js'
+import { Button } from '../Button.js'
 
 interface HapusCatatanModalProps {
   note: Note | null
@@ -18,6 +20,9 @@ export function HapusCatatanModal({
   const [error, setError] = useState<string | null>(null)
 
   if (!isOpen || !note) return null
+
+  const { judul } = ringkasanCatatan(note.isi)
+  const displayJudul = judul || 'Tanpa judul'
 
   const handleConfirm = async () => {
     setIsDeleting(true)
@@ -53,7 +58,7 @@ export function HapusCatatanModal({
         <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-2 leading-relaxed">
           Apakah Anda yakin ingin menghapus catatan{' '}
           <strong className="text-[var(--text-main)]">
-            &ldquo;{note.judul}&rdquo;
+            &ldquo;{displayJudul}&rdquo;
           </strong>? Tindakan ini tidak dapat dibatalkan.
         </p>
 
@@ -64,29 +69,26 @@ export function HapusCatatanModal({
         )}
 
         <div className="mt-6 flex items-center justify-end gap-3">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={onClose}
             disabled={isDeleting}
-            className="px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--bg-page)] transition-colors cursor-pointer disabled:opacity-50"
           >
             Batal
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="danger"
+            size="md"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="px-4.5 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-xs cursor-pointer flex items-center gap-2 disabled:opacity-60"
+            isLoading={isDeleting}
           >
-            {isDeleting && (
-              <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            )}
-            <span>Hapus Sekarang</span>
-          </button>
+            Hapus Sekarang
+          </Button>
         </div>
       </div>
     </div>

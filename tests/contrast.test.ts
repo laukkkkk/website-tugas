@@ -161,4 +161,24 @@ describe('Validasi Rasio Kontras WCAG AA (>= 4.5:1)', () => {
       expect(ratioDarkBadge).toBeGreaterThanOrEqual(4.5)
     })
   })
+
+  describe('Tombol Aksen & Aksi (Button Contrast)', () => {
+    it('Teks putih (#ffffff) pada tombol aksen cyan (#00838f) memenuhi WCAG AA (>= 4.5:1)', () => {
+      const ratio = rasioKontras('#ffffff', '#00838f')
+      expect(ratio).toBeGreaterThanOrEqual(4.5)
+    })
+
+    it('Teks putih (#ffffff) pada tombol aksen hover (#006b76) memenuhi WCAG AA (>= 4.5:1)', () => {
+      const ratio = rasioKontras('#ffffff', '#006b76')
+      expect(ratio).toBeGreaterThanOrEqual(4.5)
+    })
+
+    it('Teks putih (#ffffff) pada tombol bahaya (#dc2626) dan hover (#b91c1c) memenuhi WCAG AA (>= 4.5:1)', () => {
+      const ratio = rasioKontras('#ffffff', '#dc2626')
+      expect(ratio).toBeGreaterThanOrEqual(4.5)
+
+      const ratioHover = rasioKontras('#ffffff', '#b91c1c')
+      expect(ratioHover).toBeGreaterThanOrEqual(4.5)
+    })
+  })
 })

@@ -41,7 +41,7 @@ Berikut daftar perintah yang tersedia:
 📋 /tugas - Tambah tugas kuliah baru (alur bertahap)
 💼 /kerjaan - Tambah kerjaan atau proyek baru (alur bertahap)
 📜 /list - Lihat daftar tugas & kerjaan yang belum selesai
-📝 /note - Tambah catatan baru
+📝 /note - Tambah catatan (cukup ketik isinya)
 📑 /notes - Lihat daftar catatan tersimpan
 ☑️ /todo - Tambah to-do item baru
 📋 /todos - Lihat dan kelola daftar to-do

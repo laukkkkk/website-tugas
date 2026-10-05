@@ -69,20 +69,16 @@ describe('Catatan & To-do Helpers', () => {
   })
 
   describe('validasiFormNote', () => {
-    it('mengembalikan error jika judul kosong', () => {
-      const errors = validasiFormNote('', 'Isi catatan ada')
-      expect(errors.judul).toBe('Judul catatan wajib diisi.')
-      expect(errors.isi).toBeUndefined()
+    it('mengembalikan error jika isi kosong atau hanya spasi', () => {
+      const error1 = validasiFormNote('')
+      expect(error1.isi).toBe('Isi catatan wajib diisi.')
+
+      const error2 = validasiFormNote('   ')
+      expect(error2.isi).toBe('Isi catatan wajib diisi.')
     })
 
-    it('mengembalikan error jika isi kosong', () => {
-      const errors = validasiFormNote('Judul ada', '   ')
-      expect(errors.isi).toBe('Isi catatan tidak boleh kosong.')
-      expect(errors.judul).toBeUndefined()
-    })
-
-    it('mengembalikan objek kosong jika judul dan isi valid', () => {
-      const errors = validasiFormNote('Judul Catatan', 'Isi catatan yang lengkap.')
+    it('mengembalikan objek kosong jika isi valid', () => {
+      const errors = validasiFormNote('Isi catatan yang lengkap.')
       expect(Object.keys(errors).length).toBe(0)
     })
   })

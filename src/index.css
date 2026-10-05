@@ -10,26 +10,34 @@
   --bg-muted: #f1f5f9;
 
   /* Teks (memenuhi WCAG AA >= 4.5:1) */
-  --text-main: #0f172a;       /* slate-900: kontras 18.2:1 pada #ffffff */
-  --text-sub: #475569;        /* slate-600: kontras 5.9:1 pada #ffffff */
-  --text-muted: #64748b;      /* slate-500: kontras 4.6:1 pada #ffffff */
+  --text-main: #0f172a;
+  /* slate-900: kontras 18.2:1 pada #ffffff */
+  --text-sub: #475569;
+  /* slate-600: kontras 5.9:1 pada #ffffff */
+  --text-muted: #64748b;
+  /* slate-500: kontras 4.6:1 pada #ffffff */
 
   /* Border */
-  --border-main: #e2e8f0;     /* slate-200 */
+  --border-main: #e2e8f0;
+  /* slate-200 */
   --border-focus: #00acc1;
 
   /* Brand / Aksen Utama */
-  --primary-main: #00838f;    /* cyan-800: kontras 4.7:1 pada #ffffff */
+  --primary-main: #00838f;
+  /* cyan-800: kontras 4.7:1 pada #ffffff */
   --primary-hover: #00606b;
   --primary-text: #ffffff;
 
   /* Sidebar Cyan (AGENTS.md) */
   --sidebar-bg: #e0f7fa;
   --sidebar-border: #b2ebf2;
-  --sidebar-accent: #00606b;  /* kontras 5.8:1 pada #e0f7fa */
+  --sidebar-accent: #00606b;
+  /* kontras 5.8:1 pada #e0f7fa */
   --sidebar-active: #b2ebf2;
-  --sidebar-text: #1e293b;    /* kontras 9.7:1 pada #e0f7fa */
-  --sidebar-muted: #475569;   /* kontras 4.9:1 pada #e0f7fa */
+  --sidebar-text: #1e293b;
+  /* kontras 9.7:1 pada #e0f7fa */
+  --sidebar-muted: #475569;
+  /* kontras 4.9:1 pada #e0f7fa */
 
   /* Legacy variables compatibility */
   --color-cyan-sidebar: var(--sidebar-bg);
@@ -40,32 +48,43 @@
 
 .dark {
   /* Latar dan Permukaan Mode Gelap (sesuai issue #21) */
-  --bg-page: #0f172a;         /* slate-900 */
-  --bg-card: #1e293b;         /* slate-800 */
-  --bg-input: #0f172a;        /* slate-900 */
-  --bg-muted: #334155;        /* slate-700 */
+  --bg-page: #0f172a;
+  /* slate-900 */
+  --bg-card: #1e293b;
+  /* slate-800 */
+  --bg-input: #0f172a;
+  /* slate-900 */
+  --bg-muted: #334155;
+  /* slate-700 */
 
   /* Teks Mode Gelap (sesuai issue #21: teks utama putih, sekunder minimal #CBD5E1) */
-  --text-main: #ffffff;       /* putih murni: kontras 15.9:1 pada #1e293b */
-  --text-sub: #cbd5e1;        /* slate-300: kontras 9.6:1 pada #1e293b */
-  --text-muted: #cbd5e1;      /* tetap terang agar kontras >= 4.5:1 */
+  --text-main: #ffffff;
+  /* putih murni: kontras 15.9:1 pada #1e293b */
+  --text-sub: #cbd5e1;
+  /* slate-300: kontras 9.6:1 pada #1e293b */
+  --text-muted: #cbd5e1;
+  /* tetap terang agar kontras >= 4.5:1 */
 
   /* Border */
-  --border-main: #334155;     /* slate-700 */
+  --border-main: #334155;
+  /* slate-700 */
   --border-focus: #80deea;
 
   /* Brand / Aksen Utama */
-  --primary-main: #00acc1;
-  --primary-hover: #26c6da;
-  --primary-text: #042027;
+  --primary-main: #00838f;
+  --primary-hover: #006b76;
+  --primary-text: #ffffff;
 
   /* Sidebar Gelap */
   --sidebar-bg: #111d2e;
   --sidebar-border: #1e293b;
-  --sidebar-accent: #80deea;  /* kontras 10.4:1 pada #111d2e */
+  --sidebar-accent: #80deea;
+  /* kontras 10.4:1 pada #111d2e */
   --sidebar-active: #192a42;
-  --sidebar-text: #ffffff;    /* putih murni: kontras 16.5:1 pada #111d2e */
-  --sidebar-muted: #cbd5e1;   /* kontras 9.9:1 pada #111d2e */
+  --sidebar-text: #ffffff;
+  /* putih murni: kontras 16.5:1 pada #111d2e */
+  --sidebar-muted: #cbd5e1;
+  /* kontras 9.9:1 pada #111d2e */
 
   /* Legacy variables compatibility */
   --color-cyan-sidebar: var(--sidebar-bg);

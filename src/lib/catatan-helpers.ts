@@ -50,15 +50,12 @@ export function urutkanTodos(list: Todo[]): Todo[] {
 }
 
 /**
- * Validasi form catatan.
+ * Validasi form catatan (hanya kolom isi).
  */
-export function validasiFormNote(judul: string, isi: string): { judul?: string; isi?: string } {
-  const errors: { judul?: string; isi?: string } = {}
-  if (!judul.trim()) {
-    errors.judul = 'Judul catatan wajib diisi.'
-  }
-  if (!isi.trim()) {
-    errors.isi = 'Isi catatan tidak boleh kosong.'
+export function validasiFormNote(isi: string): { isi?: string } {
+  const errors: { isi?: string } = {}
+  if (!isi || !isi.trim()) {
+    errors.isi = 'Isi catatan wajib diisi.'
   }
   return errors
 }

@@ -1,8 +1,11 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import type { Tugas, Kerjaan } from '../types/index.js'
+import type { Tugas, Kerjaan, Note, Todo } from '../types/index.js'
 import { apiFetch } from '../lib/api.js'
 import { StatCard } from '../components/dashboard/StatCard.js'
 import { TugasTerdekatList } from '../components/dashboard/TugasTerdekatList.js'
+import { KerjaanAktifCard } from '../components/dashboard/KerjaanAktifCard.js'
+import { CatatanTerbaruCard } from '../components/dashboard/CatatanTerbaruCard.js'
+import { TodoAktifCard } from '../components/dashboard/TodoAktifCard.js'
 import { TelegramPreviewCard } from '../components/dashboard/TelegramPreviewCard.js'
 import { useRouter } from '../context/RouterContext.js'
 import { hitungDeadlineTerdekat } from '../lib/dashboard-helpers.js'
@@ -11,6 +14,8 @@ export function Dashboard() {
   const { navigate } = useRouter()
   const [tugasList, setTugasList] = useState<Tugas[]>([])
   const [kerjaanList, setKerjaanList] = useState<Kerjaan[]>([])
+  const [notesList, setNotesList] = useState<Note[]>([])
+  const [todosList, setTodosList] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
@@ -24,9 +29,11 @@ export function Dashboard() {
     setError(null)
 
     try {
-      const [tugasRes, kerjaanRes] = await Promise.all([
+      const [tugasRes, kerjaanRes, notesRes, todosRes] = await Promise.all([
         apiFetch('/api/tugas?belum_selesai=true'),
         apiFetch('/api/kerjaan?belum_selesai=true'),
+        apiFetch('/api/notes'),
+        apiFetch('/api/todos'),
       ])
 
       if (!tugasRes.ok) {
@@ -35,12 +42,22 @@ export function Dashboard() {
       if (!kerjaanRes.ok) {
         throw new Error(`Gagal memuat kerjaan (${kerjaanRes.status})`)
       }
+      if (!notesRes.ok) {
+        throw new Error(`Gagal memuat catatan (${notesRes.status})`)
+      }
+      if (!todosRes.ok) {
+        throw new Error(`Gagal memuat to-do (${todosRes.status})`)
+      }
 
       const tugasData = (await tugasRes.json()) as Tugas[]
       const kerjaanData = (await kerjaanRes.json()) as Kerjaan[]
+      const notesData = (await notesRes.json()) as Note[]
+      const todosData = (await todosRes.json()) as Todo[]
 
       setTugasList(Array.isArray(tugasData) ? tugasData : [])
       setKerjaanList(Array.isArray(kerjaanData) ? kerjaanData : [])
+      setNotesList(Array.isArray(notesData) ? notesData : [])
+      setTodosList(Array.isArray(todosData) ? todosData : [])
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan saat mengambil data.'
       setError(message)
@@ -53,6 +70,35 @@ export function Dashboard() {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  // Handler untuk toggle to-do langsung dari dashboard
+  const handleToggleTodo = async (todo: Todo) => {
+    const statusBaru = !todo.selesai
+
+    // Update optimistik di state
+    setTodosList((prev) =>
+      prev.map((t) => (t.id === todo.id ? { ...t, selesai: statusBaru } : t))
+    )
+
+    try {
+      const res = await apiFetch(`/api/todos/${todo.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ selesai: statusBaru }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.message || `Gagal mengubah status to-do (${res.status})`)
+      }
+    } catch (err) {
+      // Rollback jika gagal
+      setTodosList((prev) =>
+        prev.map((t) => (t.id === todo.id ? { ...t, selesai: !statusBaru } : t))
+      )
+      const message = err instanceof Error ? err.message : 'Gagal mengubah status to-do.'
+      setError(message)
+    }
+  }
 
   // Hitung deadline terdekat dari semua tugas dan kerjaan yang belum selesai
   const deadlineInfo = useMemo(() => {
@@ -68,7 +114,7 @@ export function Dashboard() {
             Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-[var(--text-sub)] mt-1 font-medium">
-            Ringkasan status tugas, kerjaan, dan deadline terdekat Anda.
+            Ringkasan status tugas, kerjaan, catatan, dan to-do Anda.
           </p>
         </div>
 
@@ -112,7 +158,7 @@ export function Dashboard() {
         </div>
       )}
 
-      {/* 3 Kartu Ringkasan */}
+      {/* 3 Kartu Ringkasan di Atas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {/* Kartu 1: Tugas belum selesai (Merah) */}
         <StatCard
@@ -136,7 +182,7 @@ export function Dashboard() {
           onClick={() => navigate('/kerjaan')}
         />
 
-        {/* Kartu 3: Deadline terdekat (Warna mengikuti kelasWarna, teks labelSisaWaktu) */}
+        {/* Kartu 3: Deadline terdekat (Warna dinamis) */}
         <StatCard
           title="Deadline terdekat"
           value={deadlineInfo.label}
@@ -154,21 +200,29 @@ export function Dashboard() {
         />
       </div>
 
-      {/* Grid Utama: Tugas Terdekat & Pratinjau Telegram */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Kolom Kiri: Daftar Tugas Terdekat (Maksimal 3) */}
-        <div className="lg:col-span-7 h-full">
-          <TugasTerdekatList tugasList={tugasList} loading={loading} />
-        </div>
+      {/* Baris 1: Tugas Aktif & Kerjaan Aktif (2 kolom di laptop, 1 kolom di HP) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <TugasTerdekatList tugasList={tugasList} loading={loading} />
+        <KerjaanAktifCard kerjaanList={kerjaanList} loading={loading} />
+      </div>
 
-        {/* Kolom Kanan: Pratinjau Pesan Telegram jam 09.00 */}
-        <div className="lg:col-span-5 h-full">
-          <TelegramPreviewCard
-            tugasList={tugasList}
-            kerjaanList={kerjaanList}
-            loading={loading}
-          />
-        </div>
+      {/* Baris 2: Catatan Terbaru & To-do Aktif (2 kolom di laptop, 1 kolom di HP) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <CatatanTerbaruCard notesList={notesList} loading={loading} />
+        <TodoAktifCard
+          todosList={todosList}
+          loading={loading}
+          onToggleTodo={handleToggleTodo}
+        />
+      </div>
+
+      {/* Bagian Terakhir: Pratinjau Pesan Telegram jam 09.00 */}
+      <div className="w-full">
+        <TelegramPreviewCard
+          tugasList={tugasList}
+          kerjaanList={kerjaanList}
+          loading={loading}
+        />
       </div>
     </div>
   )

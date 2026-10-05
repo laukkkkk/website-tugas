@@ -8,6 +8,7 @@ import {
 import { TugasItem } from '../components/tugas/TugasItem.js'
 import { TugasFormModal } from '../components/tugas/TugasFormModal.js'
 import { HapusTugasModal } from '../components/tugas/HapusTugasModal.js'
+import { Button, Tabs, Card, Input } from '../components/index.js'
 
 export function Tugas() {
   const [tugasList, setTugasList] = useState<Tugas[]>([])
@@ -170,19 +171,21 @@ export function Tugas() {
           </p>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="primary"
           onClick={() => {
             setTugasToEdit(null)
             setIsFormOpen(true)
           }}
-          className="self-start sm:self-auto inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer"
+          leftIcon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+            </svg>
+          }
+          className="self-start sm:self-auto"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-          </svg>
-          <span>Tambah Tugas</span>
-        </button>
+          Tambah Tugas
+        </Button>
       </div>
 
       {/* Banner Pesan Sukses */}
@@ -209,88 +212,59 @@ export function Tugas() {
             <span className="text-base">⚠️</span>
             <span>{error}</span>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={fetchTugas}
-            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-900 dark:text-red-100 transition-colors cursor-pointer"
+            className="bg-red-500/20 hover:bg-red-500/30 text-red-900 dark:text-red-100 border-transparent"
           >
             Coba lagi
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5 pb-2">
         {/* Filter Tabs */}
-        <div className="flex items-center p-1 rounded-xl bg-[var(--bg-input)] border border-[var(--border-main)]">
-          <button
-            type="button"
-            onClick={() => setFilter('semua')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              filter === 'semua'
-                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
-                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
-            }`}
-          >
-            Semua ({tugasList.length})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilter('belum_selesai')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              filter === 'belum_selesai'
-                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
-                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
-            }`}
-          >
-            Belum Selesai ({belumSelesaiCount})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilter('selesai')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              filter === 'selesai'
-                ? 'bg-[var(--bg-card)] text-cyan-600 dark:text-cyan-400 font-bold shadow-2xs'
-                : 'text-[var(--text-sub)] hover:text-[var(--text-main)]'
-            }`}
-          >
-            Selesai ({selesaiCount})
-          </button>
-        </div>
+        <Tabs
+          tabs={[
+            { id: 'semua', label: 'Semua', count: tugasList.length },
+            { id: 'belum_selesai', label: 'Belum Selesai', count: belumSelesaiCount },
+            { id: 'selesai', label: 'Selesai', count: selesaiCount },
+          ]}
+          activeTab={filter}
+          onChange={(tabId) => setFilter(tabId as FilterStatusTugas)}
+        />
 
         {/* Search Input */}
-        <div className="relative sm:w-72">
-          <svg
-            className="w-4 h-4 absolute left-3 top-3 text-[var(--text-muted)]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
+        <div className="sm:w-72">
+          <Input
             type="text"
             placeholder="Cari tugas atau matkul..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-8 py-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
+            leftIcon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            }
+            rightIcon={
+              search ? (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="hover:text-[var(--text-main)] cursor-pointer"
+                >
+                  ✕
+                </button>
+              ) : undefined
+            }
           />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch('')}
-              className="absolute right-2.5 top-2.5 text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
-            >
-              ✕
-            </button>
-          )}
         </div>
       </div>
 
@@ -300,9 +274,9 @@ export function Tugas() {
           // Skeleton Loader
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div
+              <Card
                 key={i}
-                className="p-5 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] animate-pulse space-y-3"
+                className="p-5 animate-pulse space-y-3"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800"></div>
@@ -310,12 +284,12 @@ export function Tugas() {
                 </div>
                 <div className="h-3 w-32 bg-slate-200 dark:bg-slate-800 rounded-md ml-8"></div>
                 <div className="h-5 w-40 bg-slate-200 dark:bg-slate-800 rounded-full ml-8"></div>
-              </div>
+              </Card>
             ))}
           </div>
         ) : filteredList.length === 0 ? (
           // Keadaan Kosong
-          <div className="py-16 px-4 rounded-3xl border border-dashed border-[var(--border-main)] bg-[var(--bg-card)]/40 text-center flex flex-col items-center justify-center">
+          <Card className="py-16 px-4 border-dashed bg-[var(--bg-card)]/40 text-center flex flex-col items-center justify-center">
             <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-3xl mb-3">
               📋
             </div>
@@ -335,18 +309,19 @@ export function Tugas() {
             </p>
 
             {!search && filter !== 'selesai' && (
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="sm"
                 onClick={() => {
                   setTugasToEdit(null)
                   setIsFormOpen(true)
                 }}
-                className="mt-4 px-4 py-2 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+                className="mt-4"
               >
                 + Tambah Tugas Sekarang
-              </button>
+              </Button>
             )}
-          </div>
+          </Card>
         ) : (
           // List Item Tugas
           filteredList.map((tugas) => (

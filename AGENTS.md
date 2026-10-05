@@ -31,7 +31,7 @@ Website pengingat tugas dan kerjaan pribadi (satu pengguna) dengan bot Telegram.
 ## Skema database
 - tugas: id (uuid pk), judul (text, wajib), matkul (text, wajib), tipe ('individu' atau 'kelompok'), link_pengumpulan (text, boleh kosong), deadline (timestamptz, wajib), selesai (boolean, default false), created_at
 - kerjaan: id (uuid pk), judul (wajib), deskripsi (text), deadline (timestamptz, wajib), selesai (default false), created_at
-- notes: id, judul, isi, created_at, updated_at
+- notes: id, isi, created_at, updated_at. Kolom judul telah dihapus; judul diturunkan secara otomatis dari baris pertama isi lewat fungsi murni shared/catatan.ts (ringkasanCatatan).
 - todos: id, teks, selesai (default false), created_at
 - bot_sessions: key (text pk), value (jsonb), updated_at. Menyimpan state percakapan bot karena serverless tidak menyimpan memori antar request
 
@@ -45,14 +45,18 @@ Berdasarkan selisih hari dari sekarang (WIB):
 Label sisa waktu: "Hari ini", "Besok", "n hari lagi".
 
 ## Desain web
-- Mode terang dan gelap menyeluruh di seluruh aplikasi menggunakan class-based dark mode (`html.dark`) dan token CSS semantik (`--bg-page`, `--bg-card`, `--bg-input`, `--text-main`, `--text-sub`, `--border-main`, dll).
-- Mode terang: dasar putih/slate-50, warna kedua cyan (latar sidebar sekitar #E0F7FA, tombol utama #00838F / #00ACC1, teks aksen #00606B, teks utama #0F172A).
+- Mode terang dan gelap menyeluruh di seluruh aplikasi menggunakan class-based dark mode (`html.dark`) dan token CSS semantik (`--bg-page`, `--bg-card`, `--bg-input`, `--text-main`, `--text-sub`, `--border-main`, `--primary-main`, dll).
+- Warna aksen tunggal seragam biru-cyan di semua halaman (Dashboard, Tugas, Kerjaan, Catatan & To-do). Halaman Kerjaan menggunakan cyan yang konsisten (tidak menggunakan aksen oranye/amber; oranye/kuning dikhususkan untuk status deadline).
+- Tombol aksi utama (Tambah Tugas, Tambah Kerjaan, Catatan Baru, Tambah to-do, Tambah Catatan, Simpan, Masuk ke Dashboard) berlatar cyan tua `#00838F` (hover `#006B76`) dengan teks putih `#FFFFFF` untuk menjamin rasio kontras WCAG AA (>= 4.5:1) baik di mode terang maupun mode gelap.
+- Komponen UI bersama (`Button`, `Tabs`, `Card`, `Badge`, `Input`) di `src/components` digunakan di seluruh halaman untuk menjaga konsistensi visual, interaksi, focus ring, dan aksesibilitas.
+- Warna semantik (merah, kuning/amber, hijau) dikhususkan untuk indikasi status, kartu ringkasan deadline, badge sisa waktu, dan tombol aksi destruktif/bahaya (merah).
+- Mode terang: dasar putih/slate-50, warna kedua cyan (latar sidebar sekitar #E0F7FA, teks aksen #00606B, teks utama #0F172A).
 - Mode gelap: latar halaman sekitar #0F172A, kartu sekitar #1E293B, border sekitar #334155. Teks utama harus putih terang (#FFFFFF), teks sekunder minimal #CBD5E1 (tidak boleh redup).
 - Seluruh kombinasi teks dan latar belakang wajib memenuhi standar rasio kontras WCAG AA (>= 4.5:1).
 - Kartu ringkasan dan badge deadline (merah, kuning, hijau) harus memiliki varian mode gelap dengan latar belakang gelap bertinta (dark tinted) dan teks kontras tinggi.
 - Laptop: sidebar kiri. HP: sidebar tersembunyi, dibuka lewat tombol garis tiga.
 - Daftar tugas dan kerjaan diurutkan per deadline (bukan per mata kuliah). Yang selesai turun ke bawah dan judulnya dicoret.
-- Semua halaman, modal, form, dan fitur baru WAJIB menggunakan token warna semantik, tidak boleh menggunakan warna teks/latar hardcoded yang mengabaikan tema gelap.
+- Semua halaman, modal, form, dan fitur baru WAJIB menggunakan token warna semantik dan komponen bersama, tidak boleh menggunakan warna teks/latar hardcoded yang mengabaikan tema gelap.
 
 ## Environment variables
 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (server saja), VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (web), BOT_TOKEN, OWNER_CHAT_ID, TELEGRAM_WEBHOOK_SECRET, REMINDER_SECRET

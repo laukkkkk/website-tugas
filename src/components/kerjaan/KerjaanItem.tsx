@@ -40,7 +40,7 @@ export function KerjaanItem({
       className={`group relative p-4 sm:p-5 rounded-2xl border transition-all duration-200 ${
         kerjaan.selesai
           ? 'bg-[var(--bg-page)]/80 border-[var(--border-main)]/60 opacity-80'
-          : 'bg-[var(--bg-card)] border-[var(--border-main)] hover:border-amber-500/50 shadow-xs'
+          : 'bg-[var(--bg-card)] border-[var(--border-main)] hover:border-cyan-500/50 shadow-xs'
       }`}
     >
       <div className="flex items-start gap-3 sm:gap-4">
@@ -58,8 +58,8 @@ export function KerjaanItem({
             <div
               className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
                 kerjaan.selesai
-                  ? 'bg-amber-500 border-amber-500 text-white'
-                  : 'border-[var(--border-main)] hover:border-amber-500 bg-[var(--bg-input)]'
+                  ? 'bg-cyan-600 border-cyan-600 text-white'
+                  : 'border-[var(--border-main)] hover:border-cyan-500 bg-[var(--bg-input)]'
               } ${isToggling ? 'opacity-50 animate-pulse' : ''}`}
             >
               {kerjaan.selesai && (
@@ -105,7 +105,7 @@ export function KerjaanItem({
                 type="button"
                 onClick={() => onEdit(kerjaan)}
                 title="Edit kerjaan"
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-amber-600 hover:bg-amber-500/10 dark:hover:text-amber-400 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-cyan-600 hover:bg-cyan-500/10 dark:hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path

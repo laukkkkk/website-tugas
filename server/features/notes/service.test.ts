@@ -16,16 +16,17 @@ describe('server/features/notes/service.ts', () => {
   })
 
   describe('tambah', () => {
-    it('throws ValidationError if judul is missing or whitespace', async () => {
+    it('throws ValidationError if isi is missing or whitespace', async () => {
       const mockClient = {} as SupabaseClient
-      await expect(tambah({ judul: '  ' }, mockClient)).rejects.toThrow('Judul catatan wajib diisi.')
+      await expect(tambah({ isi: '   ' }, mockClient)).rejects.toThrow('Isi catatan wajib diisi.')
+      await expect(tambah({ isi: '' }, mockClient)).rejects.toThrow(ValidationError)
+      await expect(tambah({} as any, mockClient)).rejects.toThrow(ValidationError)
     })
 
-    it('inserts note with default empty string isi if not provided', async () => {
+    it('inserts note with trimmed isi', async () => {
       const mockNote = {
         id: 'note-1',
-        judul: 'Catatan Kuliah',
-        isi: '',
+        isi: 'Catatan Kuliah Pemrograman Web\nCatatan materi penting',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }
@@ -37,12 +38,14 @@ describe('server/features/notes/service.ts', () => {
 
       const mockClient = { from: fromMock } as unknown as SupabaseClient
 
-      const result = await tambah({ judul: '  Catatan Kuliah  ' }, mockClient)
+      const result = await tambah(
+        { isi: '  Catatan Kuliah Pemrograman Web\nCatatan materi penting  ' },
+        mockClient
+      )
 
       expect(fromMock).toHaveBeenCalledWith('notes')
       expect(insertMock).toHaveBeenCalledWith({
-        judul: 'Catatan Kuliah',
-        isi: '',
+        isi: 'Catatan Kuliah Pemrograman Web\nCatatan materi penting',
       })
       expect(result).toEqual(mockNote)
     })
@@ -51,8 +54,8 @@ describe('server/features/notes/service.ts', () => {
   describe('ambilSemua (urutan updated_at DESC)', () => {
     it('orders by updated_at DESC (terakhir diedit di atas)', async () => {
       const mockData = [
-        { id: '1', judul: 'Note Baru Diedit', updated_at: '2026-10-03T10:00:00Z' },
-        { id: '2', judul: 'Note Lama', updated_at: '2026-10-01T10:00:00Z' },
+        { id: '1', isi: 'Note Baru Diedit', updated_at: '2026-10-03T10:00:00Z' },
+        { id: '2', isi: 'Note Lama', updated_at: '2026-10-01T10:00:00Z' },
       ]
 
       const orderMock = vi.fn().mockResolvedValue({ data: mockData, error: null })
@@ -69,10 +72,10 @@ describe('server/features/notes/service.ts', () => {
     })
   })
 
-  describe('ubah', () => {
-    it('throws ValidationError when no data provided to ubah', async () => {
+  describe('ambilById', () => {
+    it('throws ValidationError when id is empty', async () => {
       const mockClient = {} as SupabaseClient
-      await expect(ubah('id-1', {}, mockClient)).rejects.toThrow('Tidak ada data yang diperbarui.')
+      await expect(ambilById('   ', mockClient)).rejects.toThrow('ID catatan wajib diisi.')
     })
 
     it('throws NotFoundError when note does not exist', async () => {
@@ -83,14 +86,46 @@ describe('server/features/notes/service.ts', () => {
 
       const mockClient = { from: fromMock } as unknown as SupabaseClient
 
-      await expect(ubah('non-existent', { judul: 'Baru' }, mockClient)).rejects.toThrow(NotFoundError)
+      await expect(ambilById('non-existent', mockClient)).rejects.toThrow(NotFoundError)
     })
 
-    it('updates updated_at timestamp when updating note', async () => {
-      const existing = { id: 'note-1', judul: 'Lama', isi: 'Lama' }
+    it('returns note when found', async () => {
+      const mockNote = { id: 'note-1', isi: 'Isi catatan' }
+      const maybeSingleMock = vi.fn().mockResolvedValue({ data: mockNote, error: null })
+      const eqMock = vi.fn(() => ({ maybeSingle: maybeSingleMock }))
+      const selectMock = vi.fn(() => ({ eq: eqMock }))
+      const fromMock = vi.fn(() => ({ select: selectMock }))
+
+      const mockClient = { from: fromMock } as unknown as SupabaseClient
+
+      const res = await ambilById('note-1', mockClient)
+      expect(res).toEqual(mockNote)
+    })
+  })
+
+  describe('ubah', () => {
+    it('throws ValidationError when isi is missing or whitespace', async () => {
+      const mockClient = {} as SupabaseClient
+      await expect(ubah('id-1', { isi: '  ' }, mockClient)).rejects.toThrow('Isi catatan tidak boleh kosong.')
+      await expect(ubah('id-1', {} as any, mockClient)).rejects.toThrow(ValidationError)
+    })
+
+    it('throws NotFoundError when note does not exist', async () => {
+      const maybeSingleMock = vi.fn().mockResolvedValue({ data: null, error: null })
+      const eqMock = vi.fn(() => ({ maybeSingle: maybeSingleMock }))
+      const selectMock = vi.fn(() => ({ eq: eqMock }))
+      const fromMock = vi.fn(() => ({ select: selectMock }))
+
+      const mockClient = { from: fromMock } as unknown as SupabaseClient
+
+      await expect(ubah('non-existent', { isi: 'Isi baru' }, mockClient)).rejects.toThrow(NotFoundError)
+    })
+
+    it('updates updated_at timestamp and isi when updating note', async () => {
+      const existing = { id: 'note-1', isi: 'Lama' }
       const maybeSingleMock = vi.fn().mockResolvedValue({ data: existing, error: null })
 
-      const updated = { ...existing, judul: 'Judul Baru', updated_at: new Date().toISOString() }
+      const updated = { id: 'note-1', isi: 'Isi Baru', updated_at: new Date().toISOString() }
       const singleUpdateMock = vi.fn().mockResolvedValue({ data: updated, error: null })
       const selectUpdateMock = vi.fn(() => ({ single: singleUpdateMock }))
       const eqUpdateMock = vi.fn(() => ({ select: selectUpdateMock }))
@@ -103,15 +138,15 @@ describe('server/features/notes/service.ts', () => {
 
       const mockClient = { from: fromMock } as unknown as SupabaseClient
 
-      const res = await ubah('note-1', { judul: 'Judul Baru' }, mockClient)
+      const res = await ubah('note-1', { isi: '  Isi Baru  ' }, mockClient)
 
       expect(updateMock).toHaveBeenCalledWith(
         expect.objectContaining({
-          judul: 'Judul Baru',
+          isi: 'Isi Baru',
           updated_at: expect.any(String),
         })
       )
-      expect(res.judul).toBe('Judul Baru')
+      expect(res.isi).toBe('Isi Baru')
     })
   })
 
@@ -127,7 +162,7 @@ describe('server/features/notes/service.ts', () => {
     })
 
     it('deletes note successfully when it exists', async () => {
-      const existing = { id: 'note-1' }
+      const existing = { id: 'note-1', isi: 'Catatan' }
       const maybeSingleMock = vi.fn().mockResolvedValue({ data: existing, error: null })
       const deleteMock = vi.fn().mockResolvedValue({ error: null })
 

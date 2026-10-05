@@ -19,7 +19,7 @@ import {
 } from '../../features/notes/service.js'
 import { notesComposer, renderNotesList } from './notes.js'
 
-function createMessageContext(text: string) {
+function createMessageContext(text: string, initialSession: Record<string, any> = {}) {
   const api = new Api('123:mock-token')
   let entities: Array<{ type: string; offset: number; length: number }> | undefined = undefined
 
@@ -46,7 +46,7 @@ function createMessageContext(text: string) {
     first_name: 'Bot',
     username: 'TestBot',
   }) as unknown as BotContext
-  ctx.session = {}
+  ctx.session = { ...initialSession }
   ctx.reply = vi.fn().mockResolvedValue(undefined) as any
   return ctx
 }
@@ -87,15 +87,13 @@ describe('Bot Handler Notes (server/bot/handlers/notes.ts)', () => {
   const sampleNotes = [
     {
       id: 'n-1',
-      judul: 'Rangkuman Bab 1',
-      isi: 'Isi rangkuman arsitektur von neumann',
+      isi: 'Rangkuman Bab 1\nIsi rangkuman arsitektur von neumann',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     {
       id: 'n-2',
-      judul: 'Ide Tugas Akhir',
-      isi: 'Aplikasi reminder satu pengguna terintegrasi bot telegram',
+      isi: 'Ide Tugas Akhir\nAplikasi reminder satu pengguna terintegrasi bot telegram',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -106,45 +104,111 @@ describe('Bot Handler Notes (server/bot/handlers/notes.ts)', () => {
   })
 
   describe('Command /note', () => {
-    it('berhasil menyimpan catatan baru dengan format judul | isi', async () => {
+    it('menyimpan catatan baru langsung dengan teks setelah perintah tanpa pemisah', async () => {
       vi.mocked(mockTambahNote).mockResolvedValueOnce({
         id: 'n-new',
-        judul: 'Rangkuman Bab 1',
-        isi: 'Poin penting arsitektur komputer',
+        isi: 'jangan lupa buat template capcut',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
 
-      const ctx = createMessageContext(
-        '/note Rangkuman Bab 1 | Poin penting arsitektur komputer'
-      )
+      const ctx = createMessageContext('/note jangan lupa buat template capcut')
       await notesComposer.middleware()(ctx, next)
 
       expect(mockTambahNote).toHaveBeenCalledWith({
-        judul: 'Rangkuman Bab 1',
-        isi: 'Poin penting arsitektur komputer',
+        isi: 'jangan lupa buat template capcut',
       })
       expect(ctx.reply).toHaveBeenCalledWith(
         expect.stringContaining('✅ Catatan berhasil disimpan!'),
         expect.anything()
       )
-    })
-
-    it('menampilkan petunjuk format jika argumen tidak diberikan atau kurang dari 2 bagian', async () => {
-      const ctx1 = createMessageContext('/note')
-      await notesComposer.middleware()(ctx1, next)
-      expect(mockTambahNote).not.toHaveBeenCalled()
-      expect(ctx1.reply).toHaveBeenCalledWith(
-        expect.stringContaining('Format perintah note:'),
+      expect(ctx.reply).toHaveBeenCalledWith(
+        expect.stringContaining('jangan lupa buat template capcut'),
         expect.anything()
       )
+    })
 
-      const ctx2 = createMessageContext('/note Hanya Judul Tanpa Pipe')
-      await notesComposer.middleware()(ctx2, next)
+    it('jika /note dikirim tanpa teks, bot membalas "Tulis isi catatannya" dan menyetel sesi alur percakapan', async () => {
+      const ctx = createMessageContext('/note')
+      await notesComposer.middleware()(ctx, next)
+
       expect(mockTambahNote).not.toHaveBeenCalled()
-      expect(ctx2.reply).toHaveBeenCalledWith(
-        expect.stringContaining('❌ Format note salah'),
+      expect(ctx.reply).toHaveBeenCalledWith('Tulis isi catatannya')
+      expect(ctx.session).toEqual({
+        flow: 'note',
+        step: 'note_menunggu_isi',
+        payload: {},
+      })
+    })
+
+    it('menyimpan pesan teks berikutnya sebagai isi catatan dalam alur percakapan', async () => {
+      vi.mocked(mockTambahNote).mockResolvedValueOnce({
+        id: 'n-new',
+        isi: 'Rangkuman Pertemuan 1\nPoin penting materi arsitektur komputer',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+
+      const initialSession = {
+        flow: 'note',
+        step: 'note_menunggu_isi',
+        payload: {},
+      }
+      const ctx = createMessageContext(
+        'Rangkuman Pertemuan 1\nPoin penting materi arsitektur komputer',
+        initialSession
+      )
+
+      await notesComposer.middleware()(ctx, next)
+
+      expect(mockTambahNote).toHaveBeenCalledWith({
+        isi: 'Rangkuman Pertemuan 1\nPoin penting materi arsitektur komputer',
+      })
+      // Sesi harus direset setelah catatan disimpan
+      expect(ctx.session).toEqual({})
+      expect(ctx.reply).toHaveBeenCalledWith(
+        expect.stringContaining('Rangkuman Pertemuan 1'),
         expect.anything()
+      )
+      expect(ctx.reply).toHaveBeenCalledWith(
+        expect.stringContaining('Poin penting materi arsitektur komputer'),
+        expect.anything()
+      )
+    })
+
+    it('meneruskan slash command (seperti /batal) ke middleware berikutnya saat alur percakapan aktif', async () => {
+      const initialSession = {
+        flow: 'note',
+        step: 'note_menunggu_isi',
+        payload: {},
+      }
+      const ctx = createMessageContext('/batal', initialSession)
+
+      await notesComposer.middleware()(ctx, next)
+
+      expect(mockTambahNote).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
+
+    it('konfirmasi setelah menyimpan menampilkan judul turunan dan pratinjau dari shared/catatan.ts', async () => {
+      const isiCatatan = 'Judul Catatan Panjang Sekali\nBaris kedua sebagai pratinjau rincian'
+      vi.mocked(mockTambahNote).mockResolvedValueOnce({
+        id: 'n-3',
+        isi: isiCatatan,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+
+      const ctx = createMessageContext(`/note ${isiCatatan}`)
+      await notesComposer.middleware()(ctx, next)
+
+      expect(ctx.reply).toHaveBeenCalledWith(
+        expect.stringContaining('📝 *Judul Catatan Panjang Sekali*'),
+        expect.objectContaining({ parse_mode: 'Markdown' })
+      )
+      expect(ctx.reply).toHaveBeenCalledWith(
+        expect.stringContaining('Baris kedua sebagai pratinjau rincian'),
+        expect.objectContaining({ parse_mode: 'Markdown' })
       )
     })
   })
@@ -155,10 +219,11 @@ describe('Bot Handler Notes (server/bot/handlers/notes.ts)', () => {
 
       const { text, keyboard } = await renderNotesList()
       expect(text).toContain('Belum ada catatan tersimpan')
+      expect(text).toContain('/note isi catatan')
       expect(keyboard).toBeUndefined()
     })
 
-    it('menampilkan daftar catatan dan tombol inline per catatan', async () => {
+    it('menampilkan daftar catatan dan tombol inline per catatan dengan judul turunan', async () => {
       vi.mocked(mockAmbilSemuaNotes).mockResolvedValueOnce(sampleNotes)
 
       const ctx = createMessageContext('/notes')

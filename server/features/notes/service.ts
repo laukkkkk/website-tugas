@@ -18,18 +18,18 @@ export class NotFoundError extends Error {
 
 /**
  * Menambahkan catatan baru.
+ * Hanya kolom 'isi' yang disimpan, wajib dan tidak boleh kosong atau hanya spasi.
  */
 export async function tambah(
   input: TambahNoteInput,
   client: SupabaseClient = supabaseAdmin
 ): Promise<Note> {
-  if (!input.judul || typeof input.judul !== 'string' || !input.judul.trim()) {
-    throw new ValidationError('Judul catatan wajib diisi.')
+  if (!input.isi || typeof input.isi !== 'string' || !input.isi.trim()) {
+    throw new ValidationError('Isi catatan wajib diisi.')
   }
 
   const payload = {
-    judul: input.judul.trim(),
-    isi: typeof input.isi === 'string' ? input.isi : '',
+    isi: input.isi.trim(),
   }
 
   const { data, error } = await client
@@ -94,6 +94,7 @@ export async function ambilById(
 
 /**
  * Memperbarui catatan.
+ * Hanya kolom 'isi' yang diperbarui, wajib dan tidak boleh kosong atau hanya spasi.
  * Otomatis memperbarui kolom updated_at ke waktu sekarang.
  */
 export async function ubah(
@@ -105,28 +106,17 @@ export async function ubah(
     throw new ValidationError('ID catatan wajib diisi.')
   }
 
-  const updates: Record<string, unknown> = {}
-
-  if (input.judul !== undefined) {
-    if (typeof input.judul !== 'string' || !input.judul.trim()) {
-      throw new ValidationError('Judul catatan tidak boleh kosong.')
-    }
-    updates.judul = input.judul.trim()
+  if (!input.isi || typeof input.isi !== 'string' || !input.isi.trim()) {
+    throw new ValidationError('Isi catatan tidak boleh kosong.')
   }
-
-  if (input.isi !== undefined) {
-    updates.isi = typeof input.isi === 'string' ? input.isi : ''
-  }
-
-  if (Object.keys(updates).length === 0) {
-    throw new ValidationError('Tidak ada data yang diperbarui.')
-  }
-
-  // Set explicit updated_at timestamp
-  updates.updated_at = new Date().toISOString()
 
   // Pastikan record ada
   await ambilById(id, client)
+
+  const updates = {
+    isi: input.isi.trim(),
+    updated_at: new Date().toISOString(),
+  }
 
   const { data, error } = await client
     .from('notes')
@@ -153,6 +143,7 @@ export async function hapus(
     throw new ValidationError('ID catatan wajib diisi.')
   }
 
+  // Pastikan record ada sebelum dihapus
   await ambilById(id, client)
 
   const { error } = await client
@@ -161,6 +152,6 @@ export async function hapus(
     .eq('id', id.trim())
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message || 'Gagal menghapus catatan.')
   }
 }

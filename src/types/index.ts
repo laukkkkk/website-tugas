@@ -22,7 +22,6 @@ export interface Kerjaan {
 
 export interface Note {
   id: string
-  judul: string
   isi: string
   created_at: string
   updated_at: string

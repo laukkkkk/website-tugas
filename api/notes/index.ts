@@ -18,7 +18,10 @@ export default withAuth(async (req: AuthenticatedRequest, res: VercelResponse) =
 
     if (method === 'POST') {
       const body = req.body || {}
-      const data = await tambah(body)
+      const isiPayload = typeof body.isi === 'string'
+        ? body.isi
+        : (body.judul ? `${body.judul}\n${body.isi || ''}` : '')
+      const data = await tambah({ isi: isiPayload })
       res.status(201).json(data)
       return
     }

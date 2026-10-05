@@ -7,6 +7,7 @@ import {
   hapus as hapusNote,
 } from '../../features/notes/service.js'
 import type { Note } from '../../features/notes/types.js'
+import { ringkasanCatatan } from '../../../shared/catatan.js'
 
 export const notesComposer = new Composer<BotContext>()
 
@@ -18,7 +19,7 @@ export async function renderNotesList(): Promise<{ text: string; keyboard?: Inli
 
   if (notes.length === 0) {
     return {
-      text: '📑 Belum ada catatan tersimpan.\n\nTambah catatan baru dengan:\n`/note judul | isi`',
+      text: '📑 Belum ada catatan tersimpan.\n\nTambah catatan baru dengan:\n`/note isi catatan`',
     }
   }
 
@@ -26,8 +27,10 @@ export async function renderNotesList(): Promise<{ text: string; keyboard?: Inli
   const buttonRows: { text: string; callback_data: string }[][] = []
 
   notes.forEach((note: Note, index: number) => {
-    lines.push(`${index + 1}. *${note.judul}*`)
-    const shortTitle = note.judul.length > 25 ? `${note.judul.slice(0, 24)}…` : note.judul
+    const { judul } = ringkasanCatatan(note.isi)
+    const displayJudul = judul || 'Tanpa judul'
+    lines.push(`${index + 1}. *${displayJudul}*`)
+    const shortTitle = displayJudul.length > 25 ? `${displayJudul.slice(0, 24)}…` : displayJudul
     buttonRows.push([{ text: `📖 ${index + 1}. ${shortTitle}`, callback_data: `note:baca:${note.id}` }])
   })
 
@@ -41,45 +44,82 @@ export async function renderNotesList(): Promise<{ text: string; keyboard?: Inli
 }
 
 /**
- * Handler command /note judul | isi untuk menambah catatan baru.
+ * Handler command /note untuk menambah catatan baru.
+ * - Jika ada teks setelah /note: langsung disimpan sebagai isi catatan tanpa simbol pemisah.
+ * - Jika tanpa teks: membalas 'Tulis isi catatannya' dan menyimpan pesan berikutnya via bot_sessions.
  */
 notesComposer.command('note', async (ctx) => {
   const rawArgs = ctx.match?.trim()
 
-  if (!rawArgs) {
-    await ctx.reply(
-      'Format perintah note:\n`/note judul | isi`\n\nContoh:\n`/note Rangkuman Bab 1 | Poin penting materi arsitektur komputer`',
-      { parse_mode: 'Markdown' }
-    )
+  // 1. Mode jalan pintas langsung: teks setelah /note adalah isi
+  if (rawArgs) {
+    try {
+      ctx.session = {}
+      const noteBaru = await tambahNote({ isi: rawArgs })
+      const ringkasan = ringkasanCatatan(noteBaru.isi)
+      const pratinjauTeks = ringkasan.pratinjau ? `\n\n${ringkasan.pratinjau}` : ''
+      await ctx.reply(
+        `✅ Catatan berhasil disimpan!\n\n` +
+        `📝 *${ringkasan.judul}*` +
+        `${pratinjauTeks}\n\n` +
+        `Ketik /notes untuk melihat semua catatan.`,
+        { parse_mode: 'Markdown' }
+      )
+    } catch (err: any) {
+      ctx.session = {}
+      await ctx.reply(`❌ Gagal menyimpan catatan: ${err.message || 'Terjadi kesalahan sistem.'}`)
+    }
     return
   }
 
-  const parts = rawArgs.split('|').map((p) => p.trim())
-  if (parts.length < 2 || !parts[0] || !parts[1]) {
-    await ctx.reply(
-      '❌ Format note salah. Harus terdiri dari judul dan isi yang dipisahkan garis vertikal (|).\n\n' +
-      'Format:\n`/note judul | isi`\n\n' +
-      'Contoh:\n`/note Rangkuman Bab 1 | Poin penting materi arsitektur komputer`',
-      { parse_mode: 'Markdown' }
-    )
-    return
+  // 2. Mode bertahap: simpan sesi dan minta isi catatan
+  ctx.session = {
+    flow: 'note',
+    step: 'note_menunggu_isi',
+    payload: {},
   }
 
-  const judul = parts[0]
-  // Gabungkan sisa bagian jika pengguna memasukkan karakter | di dalam isi catatan
-  const isi = parts.slice(1).join('|').trim()
+  await ctx.reply('Tulis isi catatannya')
+})
 
-  try {
-    const noteBaru = await tambahNote({ judul, isi })
-    await ctx.reply(
-      `✅ Catatan berhasil disimpan!\n\n` +
-      `📝 *${noteBaru.judul}*\n\n` +
-      `${noteBaru.isi || '_(Tidak ada isi catatan)_'}\n\n` +
-      `Ketik /notes untuk melihat semua catatan.`,
-      { parse_mode: 'Markdown' }
-    )
-  } catch (err: any) {
-    await ctx.reply(`❌ Gagal menyimpan catatan: ${err.message || 'Terjadi kesalahan sistem.'}`)
+/**
+ * Handler pesan teks lanjutan untuk alur percakapan catatan.
+ */
+notesComposer.on('message:text', async (ctx, next) => {
+  const session = ctx.session
+  if (!session || session.flow !== 'note') {
+    return next()
+  }
+
+  const text = ctx.message.text.trim()
+
+  // Abaikan slash commands agar dapat ditangani command handler lain (misal /batal)
+  if (text.startsWith('/')) {
+    return next()
+  }
+
+  if (session.step === 'note_menunggu_isi') {
+    if (!text) {
+      await ctx.reply('Tulis isi catatannya')
+      return
+    }
+
+    try {
+      const noteBaru = await tambahNote({ isi: text })
+      ctx.session = {}
+      const ringkasan = ringkasanCatatan(noteBaru.isi)
+      const pratinjauTeks = ringkasan.pratinjau ? `\n\n${ringkasan.pratinjau}` : ''
+      await ctx.reply(
+        `✅ Catatan berhasil disimpan!\n\n` +
+        `📝 *${ringkasan.judul}*` +
+        `${pratinjauTeks}\n\n` +
+        `Ketik /notes untuk melihat semua catatan.`,
+        { parse_mode: 'Markdown' }
+      )
+    } catch (err: any) {
+      ctx.session = {}
+      await ctx.reply(`❌ Gagal menyimpan catatan: ${err.message || 'Terjadi kesalahan sistem.'}`)
+    }
   }
 })
 
@@ -109,13 +149,14 @@ notesComposer.callbackQuery(/^note:baca:([a-zA-Z0-9-]+)$/, async (ctx) => {
 
   try {
     const note = await ambilNoteById(id)
+    const { judul } = ringkasanCatatan(note.isi)
     const keyboard = new InlineKeyboard()
       .text('🗑️ Hapus Catatan', `note:konfirmasi_hapus:${note.id}`)
       .row()
       .text('🔙 Kembali ke Daftar', 'note:kembali')
 
     const messageText =
-      `📝 *${note.judul}*\n\n` +
+      `📝 *${judul}*\n\n` +
       `${note.isi || '_(Tidak ada isi catatan)_'}`
 
     await ctx.editMessageText(messageText, {
@@ -151,12 +192,13 @@ notesComposer.callbackQuery(/^note:konfirmasi_hapus:([a-zA-Z0-9-]+)$/, async (ct
 
   try {
     const note = await ambilNoteById(id)
+    const { judul } = ringkasanCatatan(note.isi)
     const keyboard = new InlineKeyboard()
       .text('❌ Ya, Hapus Catatan', `note:hapus:${note.id}`)
       .text('Batal', `note:baca:${note.id}`)
 
     await ctx.editMessageText(
-      `⚠️ Apakah Anda yakin ingin menghapus catatan:\n*${note.judul}*?`,
+      `⚠️ Apakah Anda yakin ingin menghapus catatan:\n*${judul}*?`,
       {
         parse_mode: 'Markdown',
         reply_markup: keyboard,

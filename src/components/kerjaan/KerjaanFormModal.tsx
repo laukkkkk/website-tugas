@@ -7,6 +7,7 @@ import {
   gabungDeadlineToIso,
   validasiFormKerjaan,
 } from '../../lib/kerjaan-helpers.js'
+import { Button } from '../Button.js'
 
 interface KerjaanFormModalProps {
   isOpen: boolean
@@ -150,7 +151,7 @@ export function KerjaanFormModal({
                 setForm({ ...form, judul: e.target.value })
                 if (errors.judul) setErrors({ ...errors, judul: undefined })
               }}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-amber-500 transition-all ${
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-600 dark:focus:ring-cyan-500 transition-all ${
                 errors.judul
                   ? 'border-red-500 focus:ring-red-400'
                   : 'border-[var(--border-main)]'
@@ -173,7 +174,7 @@ export function KerjaanFormModal({
               placeholder="Jelaskan detail apa saja yang harus diselesaikan..."
               value={form.deskripsi}
               onChange={(e) => setForm({ ...form, deskripsi: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-amber-500 transition-all resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] text-sm bg-[var(--bg-input)] text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-600 dark:focus:ring-cyan-500 transition-all resize-none"
             />
           </div>
 
@@ -191,7 +192,7 @@ export function KerjaanFormModal({
                     setForm({ ...form, tanggal: e.target.value })
                     if (errors.deadline) setErrors({ ...errors, deadline: undefined })
                   }}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] focus:outline-hidden focus:ring-2 focus:ring-amber-500 transition-all ${
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-[var(--bg-input)] text-[var(--text-main)] focus:outline-hidden focus:ring-2 focus:ring-cyan-600 dark:focus:ring-cyan-500 transition-all ${
                     errors.deadline
                       ? 'border-red-500 focus:ring-red-400'
                       : 'border-[var(--border-main)]'
@@ -204,7 +205,7 @@ export function KerjaanFormModal({
                   type="time"
                   value={form.jam}
                   onChange={(e) => setForm({ ...form, jam: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] text-sm bg-[var(--bg-input)] text-[var(--text-main)] focus:outline-hidden focus:ring-2 focus:ring-amber-500 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] text-sm bg-[var(--bg-input)] text-[var(--text-main)] focus:outline-hidden focus:ring-2 focus:ring-cyan-600 dark:focus:ring-cyan-500 transition-all"
                 />
                 <span className="text-[11px] text-[var(--text-muted)] mt-1 block">Default: 23:59 WIB</span>
               </div>
@@ -218,28 +219,24 @@ export function KerjaanFormModal({
 
           {/* Tombol Aksi Form */}
           <div className="pt-3 flex items-center justify-end gap-3 border-t border-[var(--border-main)]">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--bg-page)] transition-colors cursor-pointer disabled:opacity-50"
             >
               Batal
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all shadow-xs cursor-pointer flex items-center gap-2 disabled:opacity-60"
+              variant="primary"
+              size="sm"
+              isLoading={isSubmitting}
             >
-              {isSubmitting && (
-                <svg className="w-3.5 h-3.5 animate-spin text-slate-950" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              )}
-              <span>{isEdit ? 'Simpan Perubahan' : 'Tambah Kerjaan'}</span>
-            </button>
+              {isEdit ? 'Simpan Perubahan' : 'Tambah Kerjaan'}
+            </Button>
           </div>
         </form>
       </div>

@@ -2,9 +2,11 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import type { Note, Todo } from '../types/index.js'
 import { apiFetch } from '../lib/api.js'
 import { formatWaktuWib, urutkanTodos } from '../lib/catatan-helpers.js'
+import { ringkasanCatatan } from '../../shared/catatan.js'
 import { NoteEditorModal } from '../components/catatan/NoteEditorModal.js'
 import { HapusCatatanModal } from '../components/catatan/HapusCatatanModal.js'
 import { TodoItem } from '../components/catatan/TodoItem.js'
+import { Button, Card, Input } from '../components/index.js'
 
 export function Catatan() {
   // State Catatan
@@ -65,12 +67,12 @@ export function Catatan() {
   }, [fetchData])
 
   // --- Operasi Catatan ---
-  const handleSaveNote = async (payload: { judul: string; isi: string }) => {
+  const handleSaveNote = async (payload: { isi: string }) => {
     if (selectedNote) {
       // Edit Catatan
       const res = await apiFetch(`/api/notes/${selectedNote.id}`, {
         method: 'PATCH',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ isi: payload.isi }),
       })
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
@@ -85,7 +87,7 @@ export function Catatan() {
       // Tambah Catatan Baru
       const res = await apiFetch('/api/notes', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ isi: payload.isi }),
       })
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
@@ -106,7 +108,8 @@ export function Catatan() {
       throw new Error(errorData.message || `Gagal menghapus catatan (${res.status})`)
     }
     setNotes((prev) => prev.filter((n) => n.id !== note.id))
-    showNotification(`Catatan "${note.judul}" berhasil dihapus.`)
+    const { judul } = ringkasanCatatan(note.isi)
+    showNotification(`Catatan "${judul || 'Tanpa judul'}" berhasil dihapus.`)
   }
 
   // --- Operasi To-do ---
@@ -200,17 +203,19 @@ export function Catatan() {
           </p>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={fetchData}
           disabled={loading}
-          className="self-start sm:self-auto inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-main)] hover:bg-[var(--bg-input)] transition-colors shadow-2xs cursor-pointer disabled:opacity-60"
+          className="self-start sm:self-auto gap-2"
         >
           <svg className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-600' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           <span>{loading ? 'Menyinkronkan...' : 'Sinkronkan'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Banner Notifikasi Sukses */}
@@ -250,7 +255,7 @@ export function Catatan() {
       {/* Grid Dua Kolom di Laptop, Satu Kolom di HP */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* ==================== KOLOM KIRI: CATATAN ==================== */}
-        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
+        <Card className="p-5 sm:p-6 flex flex-col min-h-[500px]">
           {/* Header Kolom Catatan */}
           <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
             <div className="flex items-center gap-2.5">
@@ -265,19 +270,21 @@ export function Catatan() {
               </div>
             </div>
 
-            <button
+            <Button
               type="button"
+              variant="primary"
+              size="sm"
               onClick={() => {
                 setSelectedNote(null)
                 setIsEditorOpen(true)
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              className="gap-1.5"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
               <span>Catatan Baru</span>
-            </button>
+            </Button>
           </div>
 
           {/* Isi Kolom Catatan */}
@@ -306,37 +313,45 @@ export function Catatan() {
                 <p className="text-xs text-[var(--text-sub)] mt-1 max-w-xs">
                   Simpan rangkuman kuliah, ide proyek, atau referensi penting Anda di sini.
                 </p>
-                <button
+                <Button
                   type="button"
+                  variant="primary"
+                  size="sm"
                   onClick={() => {
                     setSelectedNote(null)
                     setIsEditorOpen(true)
                   }}
-                  className="mt-4 px-3.5 py-1.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+                  className="mt-4"
                 >
                   + Tulis Catatan Pertama
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="space-y-3">
-                {notes.map((note) => (
-                  <div
-                    key={note.id}
-                    onClick={() => {
-                      setSelectedNote(note)
-                      setIsEditorOpen(true)
-                    }}
-                    className="group relative p-4 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-cyan-500/50 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-bold text-[var(--text-main)] truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                          {note.judul}
-                        </h3>
-                        <p className="text-xs text-[var(--text-sub)] mt-1 line-clamp-2 leading-relaxed">
-                          {note.isi}
-                        </p>
-                      </div>
+                {notes.map((note) => {
+                  const { judul, pratinjau } = ringkasanCatatan(note.isi)
+                  const displayJudul = judul || 'Tanpa judul'
+
+                  return (
+                    <div
+                      key={note.id}
+                      onClick={() => {
+                        setSelectedNote(note)
+                        setIsEditorOpen(true)
+                      }}
+                      className="group relative p-4 rounded-2xl border border-[var(--border-main)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-cyan-500/50 transition-all cursor-pointer"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-bold text-[var(--text-main)] truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                            {displayJudul}
+                          </h3>
+                          {pratinjau ? (
+                            <p className="text-xs text-[var(--text-sub)] mt-1 line-clamp-2 leading-relaxed">
+                              {pratinjau}
+                            </p>
+                          ) : null}
+                        </div>
 
                       {/* Tombol Hapus Catatan */}
                       <button
@@ -366,14 +381,15 @@ export function Catatan() {
                       </span>
                     </div>
                   </div>
-                ))}
+                )
+              })}
               </div>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* ==================== KOLOM KANAN: TO-DO ==================== */}
-        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border-main)] p-5 sm:p-6 shadow-xs flex flex-col min-h-[500px]">
+        <Card className="p-5 sm:p-6 flex flex-col min-h-[500px]">
           {/* Header Kolom To-do */}
           <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
             <div className="flex items-center gap-2.5">
@@ -391,21 +407,24 @@ export function Catatan() {
 
           {/* Form Tambah Cepat To-do */}
           <form onSubmit={handleAddTodo} className="mt-4 flex items-center gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Tambahkan to-do baru lalu tekan Enter..."
               value={newTodoText}
               onChange={(e) => setNewTodoText(e.target.value)}
               disabled={isAddingTodo}
-              className="flex-1 px-3.5 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-input)] text-xs sm:text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:outline-hidden focus:ring-2 focus:ring-cyan-500 shadow-2xs"
+              className="flex-1"
             />
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
               disabled={isAddingTodo || !newTodoText.trim()}
-              className="px-4 py-2.5 rounded-xl bg-[var(--primary-main)] hover:bg-[#0097a7] text-slate-950 font-bold text-xs sm:text-sm shadow-xs transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+              isLoading={isAddingTodo}
+              className="shrink-0"
             >
-              {isAddingTodo ? '...' : '+ Tambah'}
-            </button>
+              + Tambah
+            </Button>
           </form>
 
           {/* Daftar Item To-do */}
@@ -447,7 +466,7 @@ export function Catatan() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Modal Editor / Viewer Catatan */}

@@ -62,7 +62,7 @@ describe('API /api/notes/[id]', () => {
   }
 
   it('PATCH /api/notes/[id] updates note and returns 200', async () => {
-    const updated = { id: 'note-1', judul: 'Catatan Baru' }
+    const updated = { id: 'note-1', isi: 'Catatan Baru' }
     vi.mocked(ubah).mockResolvedValueOnce(updated as any)
 
     const { res, statusMock, jsonMock } = createMockRes()
@@ -70,14 +70,14 @@ describe('API /api/notes/[id]', () => {
       method: 'PATCH',
       headers: { authorization: 'Bearer token-123' },
       query: { id: 'note-1' },
-      body: { judul: 'Catatan Baru' },
+      body: { isi: 'Catatan Baru' },
     } as unknown as VercelRequest
 
     await handler(req, res)
 
     expect(statusMock).toHaveBeenCalledWith(200)
     expect(jsonMock).toHaveBeenCalledWith(updated)
-    expect(ubah).toHaveBeenCalledWith('note-1', { judul: 'Catatan Baru' })
+    expect(ubah).toHaveBeenCalledWith('note-1', { isi: 'Catatan Baru' })
   })
 
   it('DELETE /api/notes/[id] deletes note and returns 200', async () => {

@@ -23,7 +23,10 @@ export default withAuth(async (req: AuthenticatedRequest, res: VercelResponse) =
   try {
     if (method === 'PATCH') {
       const body = req.body || {}
-      const updated = await ubah(id, body)
+      const isiPayload = typeof body.isi === 'string'
+        ? body.isi
+        : (body.judul ? `${body.judul}\n${body.isi || ''}` : '')
+      const updated = await ubah(id, { isi: isiPayload })
       res.status(200).json(updated)
       return
     }
