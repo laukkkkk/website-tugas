@@ -145,9 +145,82 @@ describe('Endpoint Reminder (api/reminder.ts)', () => {
     expect(jsonMock).toHaveBeenCalledWith(
       expect.objectContaining({
         sent: false,
+        tugasCount: 0,
+        kerjaanCount: 0,
       })
     )
+    // Supabase query selalu dijalankan meskipun data kosong
+    expect(mockAmbilTugas).toHaveBeenCalledTimes(1)
+    expect(mockAmbilKerjaan).toHaveBeenCalledTimes(1)
     expect(mockSendMessage).not.toHaveBeenCalled()
+  })
+
+  it('mengizinkan autentikasi via header Authorization: Bearer <token>', async () => {
+    vi.mocked(mockAmbilTugas).mockResolvedValueOnce([])
+    vi.mocked(mockAmbilKerjaan).mockResolvedValueOnce([])
+
+    const { res, statusMock, jsonMock } = createMockRes()
+    const req = {
+      headers: {
+        authorization: `Bearer ${REMINDER_SECRET}`,
+      },
+    } as unknown as VercelRequest
+
+    await handler(req, res)
+
+    expect(statusMock).toHaveBeenCalledWith(200)
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sent: false,
+        tugasCount: 0,
+        kerjaanCount: 0,
+      })
+    )
+    expect(mockAmbilTugas).toHaveBeenCalledTimes(1)
+    expect(mockAmbilKerjaan).toHaveBeenCalledTimes(1)
+  })
+
+  it('menolak metode HTTP selain GET dan POST dengan status 405', async () => {
+    const { res, statusMock, jsonMock } = createMockRes()
+    const req = {
+      method: 'DELETE',
+      headers: {
+        'x-reminder-secret': REMINDER_SECRET,
+      },
+    } as unknown as VercelRequest
+
+    await handler(req, res)
+
+    expect(statusMock).toHaveBeenCalledWith(405)
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Method Not Allowed',
+      })
+    )
+    expect(mockAmbilTugas).not.toHaveBeenCalled()
+    expect(mockAmbilKerjaan).not.toHaveBeenCalled()
+  })
+
+  it('mengembalikan status 500 jika query Supabase mengalami error', async () => {
+    vi.mocked(mockAmbilTugas).mockRejectedValueOnce(new Error('Koneksi Supabase terputus'))
+    vi.mocked(mockAmbilKerjaan).mockResolvedValueOnce([])
+
+    const { res, statusMock, jsonMock } = createMockRes()
+    const req = {
+      headers: {
+        'x-reminder-secret': REMINDER_SECRET,
+      },
+    } as unknown as VercelRequest
+
+    await handler(req, res)
+
+    expect(statusMock).toHaveBeenCalledWith(500)
+    expect(jsonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Internal Server Error',
+        message: 'Koneksi Supabase terputus',
+      })
+    )
   })
 
   it('memecah pesan jika teks melebihi batas panjang maksimum', async () => {

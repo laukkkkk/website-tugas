@@ -92,7 +92,9 @@ Untuk mengaktifkan pengingat jam 09.00 WIB setiap hari:
 3. **Metode**: `GET`
 4. **Jadwal**: Setiap hari pukul 09.00 WIB (02.00 UTC) `0 2 * * *`
 5. **Headers**:
-   - `Authorization`: `Bearer <REMINDER_SECRET>`
+   - `X-Reminder-Secret`: `<REMINDER_SECRET>` (atau `Authorization: Bearer <REMINDER_SECRET>`)
+
+Panduan langkah demi langkah selengkapnya dapat dibaca pada [docs/CRON.md](docs/CRON.md).
 
 ### 5. Audit Keamanan Bundle Frontend
 
